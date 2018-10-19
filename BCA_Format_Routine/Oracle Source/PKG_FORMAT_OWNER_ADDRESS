@@ -1,0 +1,624 @@
+CREATE OR REPLACE PACKAGE BODY BCA_APPL.PKG_FORMAT_OWNER_ADDRESS
+IS
+
+/*********************************************************************************************************************
+Function: FNC_FORMAT_ADDRESS
+
+Purpose: This is a common function to format owner address
+
+arameter:
+
+Return/result: an address line with fixed line length
+            remark: the whole line won't be truncated i.e. the line of length maybe shorter
+
+Assumption: none
+
+Modified History:
+Author.....................Date...........Purpose
+---------------------------------------------------------------------------------------------------------------------
+1.0........................July 2005......original build
+
+2.0........................Sept 2006......add more criterias (c/o, attn, overflow, ...etc)
+2.1                        April 2007     put pre_directional in front of street name
+S. Zhong                   06 Jul 2011    WO15660-Freeform address issue for oversea owner address
+*********************************************************************************************************************/
+FUNCTION FNC_FORMAT_ADDRESS
+(pv_City                IN BCA_AO.RB000_NAMES.City%TYPE,
+ pv_Country             IN BCA_AO.RB000_NAMES.Country%TYPE,
+ pv_Freeform_Address    IN BCA_AO.RB000_NAMES.Freeform_Address%TYPE,
+ pv_Post_Directional    IN BCA_AO.RB000_NAMES.Post_Directional%TYPE,
+ pv_Postal_zip          IN BCA_AO.RB000_NAMES.Postal_Zip%TYPE,
+ pv_Pre_Directional     IN BCA_AO.RB000_NAMES.Pre_Directional%TYPE,
+ pv_Province_State      IN BCA_AO.RB000_NAMES.Province_State%TYPE,
+ pv_Street_Name         IN BCA_AO.RB000_NAMES.Street_Name%TYPE,
+ pv_Street_Number       IN BCA_AO.RB000_NAMES.Street_Number%TYPE,
+ pv_Street_Type         IN BCA_AO.RB000_NAMES.Street_Type%TYPE,
+ pv_Unit_Number         IN BCA_AO.RB000_NAMES.Unit_Number%TYPE,
+ pv_Address_Floor    IN BCA_AO.RB000_NAMES.ADDRESS_FLOOR%TYPE,
+ pv_Address_CO       IN BCA_AO.RB000_NAMES.ADDRESS_CO%TYPE,
+ pv_Address_Attention   IN BCA_AO.RB000_NAMES.ADDRESS_ATTENTION%TYPE,
+ pv_Address_Site     IN BCA_AO.RB000_NAMES.ADDRESS_SITE%TYPE,
+ pv_Address_Comp     IN BCA_AO.RB000_NAMES.ADDRESS_COMP%TYPE,
+ pv_Address_Mod         IN BCA_AO.RB000_NAMES.ADDRESS_MOD%TYPE,
+ pv_Address_Mod_Value   IN BCA_AO.RB000_NAMES.ADDRESS_MOD_VALUE%TYPE,
+ pv_Address_Dim         IN BCA_AO.RB000_NAMES.ADDRESS_DIM%TYPE,
+ pv_Address_Dim_Value   IN BCA_AO.RB000_NAMES.ADDRESS_DIM_VALUE%TYPE,
+ pv_Line_Length IN NUMBER, pv_Line_Number IN NUMBER)
+RETURN VARCHAR2
+IS
+
+v_addr1 VARCHAR2(256);
+v_addr2 VARCHAR2(256);
+v_addr3 VARCHAR2(256);
+v_addr4 VARCHAR2(256);
+v_addr5 VARCHAR2(256);
+v_address VARCHAR2(500);
+v_overflow VARCHAR2(256);
+
+-- freeform address
+TYPE Freeform_list IS TABLE OF VARCHAR2(256) INDEX BY BINARY_INTEGER;
+
+v_tmpStr    VARCHAR2(500);
+CRLFExist   INTEGER := 0;
+v_tmpFreeF  VARCHAR2(256);
+v_freeformaddr Freeform_list;
+
+BEGIN
+
+   v_address := FNC_PREPEND_DATA(pv_address_co, 'C/O ');
+   v_address := FNC_APPEND_CRLF(v_address, (FNC_PREPEND_DATA(pv_address_attention, 'ATTN ')));
+
+   v_Addr1 := trim(v_addr1 || FNC_APPEND_DATA(pv_street_number, ' ') ||
+                   FNC_APPEND_DATA(pv_pre_directional, ' ') ||
+                      FNC_APPEND_DATA(pv_street_name, ' ') ||
+                   FNC_APPEND_DATA(pv_street_type, ' ') ||
+                   FNC_APPEND_DATA(pv_post_directional, ' '));
+    --check unit number for overflow (exit pv_line length)
+   --if this isn't a US address
+   --
+   IF (pv_country <> '226') THEN
+        --if unit number won't fit on street address line
+     IF ((LENGTH(pv_unit_number) + 1 + LENGTH(v_Addr1)) > pv_Line_Length) THEN
+       v_overflow := FNC_PREPEND_DATA(pv_unit_number, 'UNIT ');
+     ELSE--fix, append the unit # at the start of address line
+       v_addr1 := FNC_APPEND_DATA(pv_unit_number, '-') || v_addr1;
+     END IF;
+   ELSE--USA country, if unit # not fix
+        IF ((LENGTH(v_addr1) + 3 + LENGTH(pv_unit_number)) > pv_Line_Length) THEN
+       v_overflow := FNC_PREPEND_DATA(pv_unit_number, '#');
+     ELSE
+        v_addr1 := v_addr1 || FNC_PREPEND_DATA(pv_unit_number, ' #');
+     END IF;
+   END IF;
+   --check floor for overflow
+   IF ((LENGTH(v_addr1) + 4 + Length(pv_address_floor)) > pv_line_length) THEN
+        v_overflow := trim(v_overflow ||  ' ' ||FNC_APPEND_DATA((FNC_PREPEND_DATA(pv_address_floor, 'FLR ')), ' '));
+   ELSE
+         v_addr1 := trim(v_addr1 || ' ' || FNC_APPEND_DATA((FNC_PREPEND_DATA(pv_address_floor, 'FLR ')), ' '));
+   END IF;
+
+   v_addr2 := trim(v_addr2 || FNC_APPEND_DATA((FNC_PREPEND_DATA(pv_address_site, 'SITE ')), ' ')
+                    || FNC_APPEND_DATA((FNC_PREPEND_DATA(pv_address_comp, 'COMP ')), ' '));
+
+   v_addr3 := trim(v_addr3 || FNC_APPEND_DATA(pv_address_mod, ' ')
+                       || FNC_APPEND_DATA(pv_address_mod_value, ' ')
+                       || FNC_APPEND_DATA(pv_address_dim, ' ')
+                       || FNC_APPEND_DATA(pv_address_dim_value, ' '));
+
+   v_addr4 := trim(v_addr4 || FNC_APPEND_DATA(pv_city, ' ')
+                       || FNC_APPEND_DATA(FNC_SET_PROVINCE(pv_province_state), '     ')
+                       || FNC_APPEND_DATA(pv_postal_zip, ' '));
+
+   v_addr5 := trim(v_addr5 || FNC_APPEND_DATA(FNC_SET_COUNTRY(pv_country), ' '));
+
+  --combine all the address lines order into one line with carry return and line feed between them
+    IF pv_freeform_address IS NOT NULL THEN
+
+       -- check for 1st carriage return within the freeform address
+       v_tmpStr := clean_crlf(pv_freeform_address);
+       CRLFExist := INSTR(v_tmpStr, chr(13) || chr(10));
+
+       -- No carriage return found in the string
+       IF CRLFExist = 0 THEN
+
+       -- add code to handle long freeform address
+          IF (LENGTH(v_tmpStr) > pv_Line_Length) THEN
+
+             FOR i IN 1..5 LOOP
+                v_freeformaddr(i) := GET_FORMAT_LINE(v_tmpStr, pv_Line_Length, i);
+             END LOOP;
+
+          ELSE
+
+             v_freeformaddr(1) :=TRIM(GET_FORMAT_LINE(v_tmpStr, pv_Line_Length, 1));
+
+             FOR i IN 2..5 LOOP
+                v_freeformaddr(i) := '';
+             END LOOP;
+          END IF;
+
+       ELSE   -- carriage return embedded within the string
+
+          FOR i IN 1..5 LOOP
+
+             IF CRLFExist > 0 THEN
+
+
+                IF CRLFExist > pv_Line_Length + 1 THEN
+
+                   v_tmpFreeF := GET_FORMAT_LINE(v_tmpStr, pv_Line_Length, 1);
+                   v_freeformaddr(i) := v_tmpFreeF;
+                   v_tmpStr := SUBSTR(v_tmpStr, LENGTH(v_tmpFreeF)+1);
+                   v_tmpStr := clean_crlf(v_tmpStr);
+                   CRLFExist := INSTR(v_tmpStr, chr(13) || chr(10));
+
+                ELSE
+                   v_freeformaddr(i) := SUBSTR(v_tmpStr, 1, CRLFExist-1);
+                   v_tmpStr := SUBSTR(v_tmpStr, CRLFExist+2);
+                   CRLFExist := INSTR(v_tmpStr, chr(13) || chr(10));
+                END IF;
+
+             ELSE
+                IF LENGTH(v_tmpStr) > pv_Line_Length THEN
+
+                   v_tmpFreeF := GET_FORMAT_LINE(v_tmpStr, pv_Line_Length, 1);
+                   v_freeformaddr(i) := v_tmpFreeF;
+
+                   v_tmpStr := SUBSTR(v_tmpStr, LENGTH(v_tmpFreeF)+1);
+
+                ELSIF LENGTH(TRIM(v_tmpStr)) > 0 THEN
+                   v_freeformaddr(i) := GET_FORMAT_LINE(v_tmpStr, pv_Line_Length, 1);
+                   v_tmpStr := '';
+
+                ELSE
+                   v_freeformaddr(i) := '';
+                END IF;
+
+             END IF;
+
+          END LOOP;
+       END IF;  -- 1st carriage return
+
+       FOR i IN 1..5 LOOP
+          IF ((v_freeformaddr(i) <> '') OR LENGTH(v_freeformaddr(i)) > 0) THEN
+             v_address:= FNC_APPEND_CRLF(v_address, v_freeformaddr(i));
+          END IF;
+       END LOOP;
+
+--       v_address:= FNC_APPEND_CRLF(v_address, clean_crlf(pv_freeform_address));
+       v_address := FNC_APPEND_CRLF(v_address, v_addr1);
+       v_address := FNC_APPEND_CRLF(v_address, v_addr2);
+       v_address := FNC_APPEND_CRLF(v_address, v_addr3);
+       --in case the end of freeform address having crlf (i.e. double up in the address line), so clean out the duplicated crlf
+       v_address := clean_crlf(v_address);
+
+       IF (v_addr4 IS NOT NULL AND PV_CITY IS NULL AND PV_PROVINCE_STATE IS NULL AND PV_POSTAL_ZIP IS NOT NULL) THEN
+         v_address := v_address || '     ' || v_addr4;
+       ELSIF v_addr4 IS NOT NULL THEN
+         v_address := FNC_APPEND_CRLF(v_address, v_addr4);
+       ELSE
+          v_address := trim(v_address);
+       END IF;
+
+       v_address := FNC_APPEND_CRLF(v_address, v_addr5);
+       --overflow will be displayed at the end of freeform
+       v_address := FNC_APPEND_CRLF(v_address, v_overflow);
+       --in case if crlf at the start of address line
+       IF substr(v_address, 1, 1) = chr(13) OR substr(v_address, 1, 1) = chr(10) THEN
+         v_address := substr(v_address, 2);
+       END IF;
+       IF substr(v_address, 1, 1) = chr(10) OR substr(v_address, 1, 1) = chr(13) THEN
+         v_address := substr(v_address, 2);
+       END IF;
+    ELSE--fixed from addr
+        v_address := FNC_APPEND_CRLF(v_address, v_overflow);
+        v_address := FNC_APPEND_CRLF(v_address, v_addr1);
+        v_address := FNC_APPEND_CRLF(v_address, v_addr2);
+        v_address := FNC_APPEND_CRLF(v_address, v_addr3);
+           v_address := FNC_APPEND_CRLF(v_address, v_addr4);
+        v_address := FNC_APPEND_CRLF(v_address, v_addr5);
+    END IF;--freeform address
+
+    IF pv_line_number IS NULL OR pv_line_number = 0 THEN--if pv_line_number is null or 0 return the whole address within length
+      RETURN(upper(trim(fnc_check_len(v_address, pv_line_length))));
+    ELSE
+    --return the line of addr according to the line number
+      RETURN(upper(trim(FNC_GET_ADDRESS_LINE(v_address, pv_line_length, pv_line_number))));
+    END IF;
+
+EXCEPTION
+--check with error
+WHEN OTHERS THEN
+RETURN (NULL);
+
+END FNC_FORMAT_ADDRESS;
+/*********************************************************************************************************************
+Function: FNC_APPEND_DATA
+
+Purpose: This function is to add the required info for the address line
+
+Parameter: pv_temp, pv_suffix
+
+Return/result: an address field for the address line if null, return null else
+            return address field with suffix ' ' or '-''
+
+Assumption: none
+
+Modified History:
+Author                      Date       Purpose
+---------------------------------------------------------------------------------------------------------------------
+1.0                        July 2005      original build
+
+
+*********************************************************************************************************************/
+FUNCTION FNC_APPEND_DATA(pv_temp IN VARCHAR2, pv_suffix IN VARCHAR2)
+RETURN VARCHAR2
+IS
+v_temp VARCHAR2(256);
+
+BEGIN
+
+IF pv_temp IS NOT NULL THEN
+   v_temp := upper(trim(CondStr(pv_temp))) || pv_suffix;
+ELSE
+   v_temp := NULL;
+END IF;
+
+RETURN(v_temp);
+
+EXCEPTION
+--check with error
+WHEN OTHERS THEN
+RETURN (NULL);
+END FNC_APPEND_DATA;
+/*********************************************************************************************************************
+Function: FNC_PREPEND_DATA
+
+Purpose: This function is to add the required info for the address line
+
+Parameter: pv_temp, pv_prefix
+
+Return/result: an address field for the address line if null, return null else
+            return address field with prefix
+
+Assumption: none
+
+Modified History:
+Author                      Date       Purpose
+---------------------------------------------------------------------------------------------------------------------
+1.0                        Sept 2006      original build
+
+
+*********************************************************************************************************************/
+FUNCTION FNC_PREPEND_DATA(pv_temp IN VARCHAR2, pv_prefix IN VARCHAR2)
+RETURN VARCHAR2
+IS
+v_temp VARCHAR(256);
+
+BEGIN
+IF pv_temp IS NOT NULL THEN
+   v_temp := pv_prefix || upper(trim(CondStr(pv_temp)));
+ELSE
+   v_temp := NULL;
+END IF;
+
+RETURN(v_temp);
+
+EXCEPTION
+--check with error
+WHEN OTHERS THEN
+RETURN (NULL);
+END FNC_PREPEND_DATA;
+/*********************************************************************************************************************
+Function: FNC_APPEND_CRLF
+
+Purpose: This function is to add the required info for the address line
+
+Parameter: pv_temp, pv_source
+
+Return/result: an stored field concantenate with crlf with another source of data
+
+Assumption: none
+
+Modified History:
+Author                      Date       Purpose
+---------------------------------------------------------------------------------------------------------------------
+1.0                        Sept 2006      original build
+
+
+*********************************************************************************************************************/
+FUNCTION FNC_APPEND_CRLF(pv_temp IN VARCHAR2, pv_source IN VARCHAR2)
+RETURN VARCHAR2
+IS
+v_temp VARCHAR2(500);
+BEGIN
+
+IF pv_temp IS NOT NULL AND pv_source IS NOT NULL THEN
+   v_temp := pv_temp || chr(13) || chr(10) || pv_source;
+   RETURN(v_temp);
+ELSE
+   IF pv_temp IS NULL AND pv_source IS NOT NULL THEN
+        RETURN(pv_source);
+   ELSIF pv_temp IS NOT NULL AND pv_source IS NULL THEN
+        RETURN(pv_temp);
+   ELSE
+         RETURN(NULL);
+   END IF;
+END IF;
+
+EXCEPTION
+--check with error
+WHEN OTHERS THEN
+RETURN (NULL);
+
+END FNC_APPEND_CRLF;
+/*********************************************************************************************************************
+Function: FNC_SET_PROVINCE
+
+Purpose: This is to get the province short from by using common function Get_Abrv_Prov_State
+
+Parameter: pv_province_state
+
+Return/result: return the value of the table or null if not found
+
+Assumption: The parameter of park_folio_id has been formated.
+
+Modified History:
+Author                      Date       Purpose
+---------------------------------------------------------------------------------------------------------------------
+1.0                        July 2005      original build
+
+*********************************************************************************************************************/
+FUNCTION FNC_SET_PROVINCE(pv_province_state IN VARCHAR2) RETURN VARCHAR2
+IS
+
+v_city_prov VARCHAR2(256);
+BEGIN
+   IF pv_Province_State IS NOT NULL THEN
+       v_city_prov := trim(replace(pv_province_state, '  ', ' '));
+         IF LENGTH(TRIM(v_city_prov)) > 2 Then
+           v_City_Prov := Get_Abrv_Prov_State(TRIM(v_city_prov));
+         ELSE
+           v_City_Prov := pv_Province_state;
+        END IF;
+
+   END IF;
+   RETURN(upper(trim(v_city_prov)));
+
+ EXCEPTION
+--check with error
+WHEN OTHERS THEN
+RETURN (NULL);
+
+END FNC_SET_PROVINCE;
+/*********************************************************************************************************************
+Function: FNC_SET_POSTAL
+
+Purpose: Only for USA and Canada
+
+--Parameter:
+
+Return/result: postal code or null for internal country
+
+Assumption: none
+
+Modified History:
+Author                      Date       Purpose
+---------------------------------------------------------------------------------------------------------------------
+1.0                        July 2005      original build
+1.1                             Aug 9, 2005     add code to handle country code not in '37' or '226'
+
+*********************************************************************************************************************/
+FUNCTION FNC_SET_POSTAL(pv_country IN VARCHAR2, pv_postal_zip IN VARCHAR2)
+RETURN VARCHAR2
+IS
+v_postal_zip VARCHAR2(256);
+
+BEGIN
+IF pv_Country IS NOT NULL THEN
+    IF pv_Country = '37' OR pv_Country = '226' THEN
+          IF pv_Postal_zip IS NOT NULL THEN
+            v_Postal_Zip := CondStr(pv_Postal_zip);
+         RETURN(upper(trim(v_postal_zip)));
+        ELSE
+          RETURN(NULL);
+          END IF;
+    ELSE
+         RETURN(NULL);
+    END IF;
+ELSE
+   RETURN(NULL);
+END IF;
+
+EXCEPTION
+--check with error
+WHEN OTHERS THEN
+RETURN (NULL);
+
+END FNC_SET_POSTAL;
+/*********************************************************************************************************************
+Function: FNC_SET_COUNTRY
+
+Purpose: Find the internal country from lookup table by using function Get_country
+
+Parameter: pv_country
+
+Return/result: country name or null if not found
+
+Assumption: The public function is at bca_appl
+
+Modified History:
+Author                      Date       Purpose
+---------------------------------------------------------------------------------------------------------------------
+1.0                        July 2005      original build
+
+
+*********************************************************************************************************************/
+FUNCTION FNC_SET_COUNTRY(pv_country IN VARCHAR2) RETURN VARCHAR2
+IS
+v_country VARCHAR2(256);
+BEGIN
+IF pv_Country <> '37' THEN
+   v_Country := Get_Country(pv_Country);
+END IF;
+
+RETURN(upper(trim(v_country)));
+
+END FNC_SET_COUNTRY;
+/*********************************************************************************************************************
+Function: FNC_GET_ADDRESS_LINE
+
+Purpose: This is a function to divide the freeform from address into different lines (at most 5)
+
+Parameter: pv_freeform_address, pv_line_length, pv_line_number
+
+Return/result: an address line with fixed line length
+            remark: the whole word won't be truncated i.e. the line of length maybe shorter
+
+Assumption: The parameter of park_folio_id has been formated.
+
+Modified History:
+Author                      Date       Purpose
+---------------------------------------------------------------------------------------------------------------------
+1.0                        July 2005      original build
+
+
+*********************************************************************************************************************/
+FUNCTION FNC_GET_ADDRESS_LINE(pv_Address IN VARCHAR2,
+pv_line_length IN NUMBER, pv_line_number IN NUMBER)
+RETURN VARCHAR2
+IS
+v_addr VARCHAR2(2000);
+v_start NUMBER;
+v_end NUMBER;
+
+BEGIN
+
+   v_end := instr(pv_Address, chr(13), 1, pv_line_number);
+   IF pv_line_number > 1 THEN
+      v_start := instr(pv_Address, chr(10), 1, pv_line_number - 1) + 1;
+   ELSE--pv_line number = 1
+      v_start := 1;
+   END IF;
+   IF v_end > 0 THEN
+      v_end:= v_end - v_start;
+   END IF;
+
+/*CASE pv_line_number--assume there has only 5
+    WHEN 1 THEN
+             v_end := instr(pv_Address, chr(13), 1, 1);
+             v_start := 1;
+             if v_end > 0 then
+               v_end:= v_end - v_start;
+             end if;
+    WHEN 2 THEN
+             v_end := instr(pv_Address, chr(13), 1, 2);
+             v_start:= instr(pv_Address, chr(10), 1, 1) + 1;
+             if v_end > 0 then
+               v_end:= v_end - v_start;
+             end if;
+    WHEN 3 THEN
+             v_start := instr(pv_Address, chr(10), 1, 2) + 1;
+             v_end := instr(pv_Address, chr(13), 1, 3);
+                if v_end > 0 then
+               v_end:= v_end - v_start;
+             end if;
+    WHEN 4 THEN
+             v_start:= instr(pv_Address, chr(10), 1, 3) + 1;
+             v_end := instr(pv_Address, chr(13), 1, 4);
+             if v_end > 0 then
+               v_end:= v_end - v_start;
+             end if;
+    WHEN 5 THEN
+             v_start:= instr(pv_Address, chr(10), 1, 4) + 1;
+             v_end := instr(pv_Address, chr(13), 1, 5);
+             if v_end > 0 then
+               v_end:= v_end - v_start;
+             end if;
+    ELSE
+       RETURN(NULL);
+END CASE;--case*/
+IF v_end > 0 AND v_start > 0 THEN--any line of address including 1st line
+   v_addr := FNC_CHECK_LEN(substr(pv_Address, v_start, v_end), pv_line_length);
+   RETURN(v_addr);
+ELSIF (v_end = 0 AND v_start > 1) OR (v_end = 0 AND v_start = 1 AND pv_line_number = 1) THEN
+      v_addr := FNC_CHECK_LEN(substr(pv_Address, v_start, length(trim(pv_Address))), pv_line_length);
+     RETURN(v_addr);--last line or 1st line and no more another line of address
+ELSE--no data of address line
+   RETURN(NULL);
+END IF;
+
+
+EXCEPTION
+--check with error
+WHEN OTHERS THEN
+RETURN (NULL);
+
+END FNC_GET_ADDRESS_LINE;
+/*********************************************************************************************************************
+Function: FUNCTION FNC_CHECK_LEN
+
+Purpose: This is a function to get the final result of address line
+
+Parameter: pv_temp(field content), pv_line_length,
+
+
+Return/result: > than the constraint, truncate the field until it fit in the cosntraint
+            otherwise, return back the field
+
+Assumption: The parameters are not null
+
+Modified History:
+Author                      Date       Purpose
+---------------------------------------------------------------------------------------------------------------------
+1.0                        July 2005      original build
+
+
+*********************************************************************************************************************/
+FUNCTION FNC_CHECK_LEN(pv_temp IN VARCHAR2, pv_line_length IN NUMBER)
+RETURN VARCHAR2
+IS
+
+v_len number;
+v_start number;
+v_end number;
+v_addr varchar2(2000);
+
+BEGIN
+IF length(pv_temp) <= pv_line_length THEN
+   RETURN (pv_temp);
+ELSE
+   v_start := 1;
+   v_end := pv_line_length;
+   v_addr := upper(TRIM(SUBSTR(TRIM(pv_temp), v_start, v_end)));
+ /*to see if the last char is space or not because oracle will take off the space to check the length
+of the variable so the length of the variable is not exactly what we want*/
+   IF length(v_addr) <> pv_line_length THEN
+        v_len := pv_line_length;
+   ELSE
+         v_len := length(v_addr);
+   END IF;
+
+   IF SUBSTR(v_addr, v_len, 1) <> ' ' THEN
+         FOR i IN REVERSE 1..v_end LOOP
+               IF substr(pv_temp, i, 1) = ' ' THEN
+          v_end := i;
+          exit;
+        END IF;
+      END LOOP;
+   END IF;
+END IF;
+v_addr := upper(TRIM(SUBSTR(TRIM(pv_temp), 1, v_end-1)));
+
+RETURN(v_addr);
+
+EXCEPTION
+--check with error
+WHEN OTHERS THEN
+RETURN (NULL);
+
+END FNC_CHECK_LEN;
+
+
+END PKG_FORMAT_OWNER_ADDRESS;
+/
