@@ -64,12 +64,12 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="Function\dbo.FNC_FORMAT_ADDRESS.sql" />
+    <Build Include="Table\CreateNameAddressLineTbl.sql" />
+    <Build Include="Table\dbo.CreateNameAddressTbl.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Testing Data\NameAddressData.csv" />
     <None Include="Testing Data\NameAddressData.xlsx" />
     <None Include="Oracle Source\PKG_FORMAT_OWNER_ADDRESS" />
-    <None Include="Table\NameAddressData.csv" />
-    <None Include="Table\NameAddressData.xlsx" />
   </ItemGroup>
 </Project>
