@@ -66,10 +66,24 @@
     <Build Include="Function\dbo.FNC_FORMAT_ADDRESS.sql" />
     <Build Include="Table\CreateNameAddressLineTbl.sql" />
     <Build Include="Table\dbo.CreateNameAddressTbl.sql" />
+    <Build Include="Function\FNC_PREPEND_DATA.sql" />
+    <Build Include="Function\FNC_APPEND_CRLF.sql" />
+    <Build Include="Function\FNC_APPEND_DATA.sql" />
+    <Build Include="Function\GET_FORMAT_LINE.sql" />
+    <Build Include="Function\FNC_SET_COUNTRY.sql" />
+    <Build Include="Table\dbo.dimProvinceTbl.sql" />
+    <Build Include="Table\dbo.dimCountryTbl.sql" />
+    <Build Include="Function\FNC_SET_PROVINCE.sql" />
+    <Build Include="Function\FNC_SET_POSTAL.sql" />
+    <Build Include="Function\CondStr.sql" />
+    <Build Include="Function\CLEAN_CRLF.sql" />
+    <Build Include="Function\FNC_GET_ADDRESS_LINE.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Testing Data\NameAddressData.csv" />
     <None Include="Testing Data\NameAddressData.xlsx" />
     <None Include="Oracle Source\PKG_FORMAT_OWNER_ADDRESS" />
+    <None Include="Testing Data\CountryData.csv" />
+    <None Include="Testing Data\ProvData.csv" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,252 @@
+dimCountry_SK,dimCountry_BK,Country Desc,Country Code,Country
+10,1,Afghanistan,1,01 - Afghanistan
+11,2,Albania,2,02 - Albania
+12,3,Algeria,3,03 - Algeria
+13,4,American Samoa,4,04 - American Samoa
+14,5,Andorra,5,05 - Andorra
+15,6,Angola,6,06 - Angola
+16,7,Anguilla,7,07 - Anguilla
+17,8,Antigua and Barbuda,8,08 - Antigua and Barbuda
+18,9,Argentina,9,09 - Argentina
+19,10,Armenia,10,10 - Armenia
+20,100,India,100,100 - India
+21,101,Indonesia,101,101 - Indonesia
+22,102,Iran,102,102 - Iran
+23,103,Iraq,103,103 - Iraq
+24,104,Ireland,104,104 - Ireland
+25,105,Isle of Man,105,105 - Isle of Man
+26,106,Israel,106,106 - Israel
+27,107,Italy,107,107 - Italy
+28,108,Jamaica,108,108 - Jamaica
+29,109,Japan,109,109 - Japan
+30,11,Aruba,11,11 - Aruba
+31,110,Jersey,110,110 - Jersey
+32,111,Jordan,111,111 - Jordan
+33,112,Kazakhstan,112,112 - Kazakhstan
+34,113,Kenya,113,113 - Kenya
+35,114,Kiribati,114,114 - Kiribati
+36,115,Kuwait,115,115 - Kuwait
+37,116,Kyrgyzstan,116,116 - Kyrgyzstan
+38,117,Lao (People's Democratic Republic),117,117 - Lao (People's Democratic Republic)
+39,118,Latvia,118,118 - Latvia
+40,119,Lebanon,119,119 - Lebanon
+41,120,Lesotho,120,120 - Lesotho
+42,121,Liberia,121,121 - Liberia
+43,122,Libya,122,122 - Libya
+44,124,Liechtenstein,124,124 - Liechtenstein
+45,125,Lithuania,125,125 - Lithuania
+46,126,Luxembourg,126,126 - Luxembourg
+47,127,Macau,127,127 - Macau
+48,128,Madagascar,128,128 - Madagascar
+49,129,Malawi,129,129 - Malawi
+50,13,Australia,13,13 - Australia
+51,130,Malaysia,130,130 - Malaysia
+52,131,Maldives,131,131 - Maldives
+53,132,Mali,132,132 - Mali
+54,133,Malta,133,133 - Malta
+55,134,Northern Mariana Islands,134,134 - Northern Mariana Islands
+56,135,Marshall Islands,135,135 - Marshall Islands
+57,136,Martinique,136,136 - Martinique
+58,137,Mauritania,137,137 - Mauritania
+59,138,Mauritius,138,138 - Mauritius
+60,139,Mayotte,139,139 - Mayotte
+61,14,Austria,14,14 - Austria
+62,140,Mexico,140,140 - Mexico
+63,141,US Minor Outlying Islands,141,141 - US Minor Outlying Islands
+64,142,Moldova,142,142 - Moldova
+65,143,Monaco,143,143 - Monaco
+66,144,Mongolia,144,144 - Mongolia
+67,145,Montserrat,145,145 - Montserrat
+68,146,Morocco,146,146 - Morocco
+69,147,Mozambique,147,147 - Mozambique
+70,148,Myanmar,148,148 - Myanmar
+71,149,Namibia,149,149 - Namibia
+72,15,Azerbaijan,15,15 - Azerbaijan
+73,150,Nauru,150,150 - Nauru
+74,151,Nepal,151,151 - Nepal
+75,152,Netherlands,152,152 - Netherlands
+76,153,Netherlands Antilles,153,153 - Netherlands Antilles
+77,154,New Caledonia,154,154 - New Caledonia
+78,155,New Zealand,155,155 - New Zealand
+79,156,Nicaragua,156,156 - Nicaragua
+80,157,Niger,157,157 - Niger
+81,158,Nigeria,158,158 - Nigeria
+82,159,Niue,159,159 - Niue
+83,16,Bahamas,16,16 - Bahamas
+84,160,Norfolk Island,160,160 - Norfolk Island
+85,161,Korea (Democratic People's Republic),161,161 - Korea (Democratic People's Republic)
+86,163,Norway,163,163 - Norway
+87,164,Oman,164,164 - Oman
+88,165,Pakistan,165,165 - Pakistan
+89,166,Palau,166,166 - Palau
+90,167,Panama,167,167 - Panama
+91,168,Papua New Guinea,168,168 - Papua New Guinea
+92,169,Paraguay,169,169 - Paraguay
+93,17,Bahrain,17,17 - Bahrain
+94,170,Peru,170,170 - Peru
+95,171,Philippines,171,171 - Philippines
+96,172,Pitcairn,172,172 - Pitcairn
+97,173,Poland,173,173 - Poland
+98,174,Portugal,174,174 - Portugal
+99,175,Puerto Rico,175,175 - Puerto Rico
+100,176,Qatar,176,176 - Qatar
+101,177,R‚union,177,177 - R‚union
+102,178,Romania,178,178 - Romania
+103,179,Russian Federation,179,179 - Russian Federation
+104,18,Bangladesh,18,18 - Bangladesh
+105,180,Rwanda,180,180 - Rwanda
+106,181,Saint Kitts and Nevis,181,181 - Saint Kitts and Nevis
+107,182,Saint Lucia,182,182 - Saint Lucia
+108,183,Saint Vincent and the Grenadines,183,183 - Saint Vincent and the Grenadines
+109,184,Samoa,184,184 - Samoa
+110,185,Sao Tome and Principe,185,185 - Sao Tome and Principe
+111,186,Saudi Arabia,186,186 - Saudi Arabia
+112,188,Senegal,188,188 - Senegal
+113,189,Seychelles,189,189 - Seychelles
+114,19,Barbados,19,19 - Barbados
+115,190,Sierra Leone,190,190 - Sierra Leone
+116,191,Singapore,191,191 - Singapore
+117,192,Slovakia,192,192 - Slovakia
+118,193,Slovenia,193,193 - Slovenia
+119,194,Solomon Islands,194,194 - Solomon Islands
+120,195,Somalia,195,195 - Somalia
+121,196,South Africa,196,196 - South Africa
+122,197,Korea (South),197,197 - Korea (South)
+123,198,Spain,198,198 - Spain
+124,199,Sri Lanka,199,199 - Sri Lanka
+125,20,Belarus,20,20 - Belarus
+126,200,Saint Helena,200,200 - Saint Helena
+127,201,Saint Pierre and Miquelon,201,201 - Saint Pierre and Miquelon
+128,202,Sudan,202,202 - Sudan
+129,203,Suriname,203,203 - Suriname
+130,204,Swaziland,204,204 - Swaziland
+131,205,Sweden,205,205 - Sweden
+132,206,Switzerland,206,206 - Switzerland
+133,207,Syria,207,207 - Syria
+134,209,Taiwan,209,209 - Taiwan
+135,21,Belgium,21,21 - Belgium
+136,210,Tajikistan,210,210 - Tajikistan
+137,211,Tanzania,211,211 - Tanzania
+138,212,Thailand,212,212 - Thailand
+139,213,Togo,213,213 - Togo
+140,214,Tokelau,214,214 - Tokelau
+141,215,Tonga,215,215 - Tonga
+142,216,Trinidad and Tobago,216,216 - Trinidad and Tobago
+143,217,Tristan da Cunha,217,217 - Tristan da Cunha
+144,218,Tunisia,218,218 - Tunisia
+145,219,Turkey,219,219 - Turkey
+146,22,Belize,22,22 - Belize
+147,220,Turkmenistan,220,220 - Turkmenistan
+148,221,Turks and Caicos Islands,221,221 - Turks and Caicos Islands
+149,222,Tuvalu,222,222 - Tuvalu
+150,223,Uganda,223,223 - Uganda
+151,224,Ukraine,224,224 - Ukraine
+152,225,United Arab Emirates,225,225 - United Arab Emirates
+153,226,USA,226,226 - USA
+154,227,Uruguay,227,227 - Uruguay
+155,228,Uzbekistan,228,228 - Uzbekistan
+156,229,Vanuatu,229,229 - Vanuatu
+157,23,Benin,23,23 - Benin
+158,24,Bermuda,24,24 - Bermuda
+159,25,Bhutan,25,25 - Bhutan
+160,26,Bolivia,26,26 - Bolivia
+161,27,Bosnia-Herzegovina,27,27 - Bosnia-Herzegovina
+162,28,Botswana,28,28 - Botswana
+163,29,Brazil,29,29 - Brazil
+164,30,British Virgin Islands,30,30 - British Virgin Islands
+165,300,Holy See (Vatican),300,300 - Holy See (Vatican)
+166,301,Venezuela,301,301 - Venezuela
+167,302,Viet Nam,302,302 - Viet Nam
+168,303,US Virgin Islands,303,303 - US Virgin Islands
+169,305,Wallis and Futuna,305,305 - Wallis and Futuna
+170,306,Yemen,306,306 - Yemen
+171,307,Serbia,307,307 - Serbia
+172,308,Zambia,308,308 - Zambia
+173,309,Zimbabwe,309,309 - Zimbabwe
+174,31,Brunei Darussalam,31,31 - Brunei Darussalam
+175,310,United Kingdom,310,310 - United Kingdom
+176,311,Aland Islands,311,311 - Aland Islands
+177,312,Antarctica,312,312 - Antarctica
+178,313,Bouvet Island,313,313 - Bouvet Island
+179,314,Christmas Island,314,314 - Christmas Island
+180,315,Cocos (Keeling) Island,315,315 - Cocos (Keeling) Island
+181,316,Cook Islands,316,316 - Cook Islands
+182,317,French Southern Territories,317,317 - French Southern Territories
+183,318,Heard and McDonald Islands,318,318 - Heard and McDonald Islands
+184,319,Kosovo,319,319 - Kosovo
+185,32,Bulgaria,32,32 - Bulgaria
+186,320,"Micronesia, Federal States of",320,"320 - Micronesia, Federal States of"
+187,321,Montenegro,321,321 - Montenegro
+188,322,Palestine,322,322 - Palestine
+189,323,Saint Barth‚l‚my,323,323 - Saint Barth‚l‚my
+190,324,Saint Martin,324,324 - Saint Martin
+191,325,San Marino,325,325 - San Marino
+192,326,Svalbard and Jan Mayen,326,326 - Svalbard and Jan Mayen
+193,327,Western Sahara,327,327 - Western Sahara
+194,328,South Sudan,328,328 - South Sudan
+195,329,Curacao,329,329 - Curacao
+196,33,Burkina Faso,33,33 - Burkina Faso
+197,34,Burundi,34,34 - Burundi
+198,35,Cambodia,35,35 - Cambodia
+199,36,Cameroon,36,36 - Cameroon
+200,37,Canada,37,37 - Canada
+201,38,Cape Verde,38,38 - Cape Verde
+202,39,Cayman Islands,39,39 - Cayman Islands
+203,40,Central African Republic,40,40 - Central African Republic
+204,41,Chad,41,41 - Chad
+205,42,Chile,42,42 - Chile
+206,43,China,43,43 - China
+207,44,Colombia,44,44 - Colombia
+208,45,Comoros,45,45 - Comoros
+209,46,"Congo, Democratic Republic of",46,"46 - Congo, Democratic Republic of"
+210,48,Congo (Republic),48,48 - Congo (Republic)
+211,49,Costa Rica,49,49 - Costa Rica
+212,50,C“te d'Ivoire,50,50 - C“te d'Ivoire
+213,51,Croatia,51,51 - Croatia
+214,52,Cuba,52,52 - Cuba
+215,53,Cyprus,53,53 - Cyprus
+216,54,Czech Republic,54,54 - Czech Republic
+217,55,Denmark,55,55 - Denmark
+218,56,Djibouti,56,56 - Djibouti
+219,57,Dominica,57,57 - Dominica
+220,58,Dominican Republic,58,58 - Dominican Republic
+221,59,Timor-Leste,59,59 - Timor-Leste
+222,60,Ecuador,60,60 - Ecuador
+223,61,Egypt,61,61 - Egypt
+224,62,El Salvador,62,62 - El Salvador
+225,64,Equatorial Guinea,64,64 - Equatorial Guinea
+226,65,Eritrea,65,65 - Eritrea
+227,66,Estonia,66,66 - Estonia
+228,67,Ethiopia,67,67 - Ethiopia
+229,68,Falkland Islands,68,68 - Falkland Islands
+230,69,Faroe Islands,69,69 - Faroe Islands
+231,70,Fiji,70,70 - Fiji
+232,71,Finland,71,71 - Finland
+233,74,Macedonia (The Former Yugoslav Republic of),74,74 - Macedonia (The Former Yugoslav Republic of)
+234,75,France,75,75 - France
+235,76,French Guiana,76,76 - French Guiana
+236,77,French Polynesia,77,77 - French Polynesia
+237,78,Gabon,78,78 - Gabon
+238,79,Gambia,79,79 - Gambia
+239,80,Georgia,80,80 - Georgia
+240,81,Germany,81,81 - Germany
+241,82,Ghana,82,82 - Ghana
+242,83,Gibraltar,83,83 - Gibraltar
+243,85,Greece,85,85 - Greece
+244,86,Greenland,86,86 - Greenland
+245,87,Grenada,87,87 - Grenada
+246,88,Guadeloupe,88,88 - Guadeloupe
+247,89,Guam,89,89 - Guam
+248,90,Guatemala,90,90 - Guatemala
+249,91,Guernsey,91,91 - Guernsey
+250,92,Guinea,92,92 - Guinea
+251,93,Guinea-Bissau,93,93 - Guinea-Bissau
+252,94,Guyana,94,94 - Guyana
+253,95,Haiti,95,95 - Haiti
+254,96,Honduras,96,96 - Honduras
+255,97,Hong Kong,97,97 - Hong Kong
+256,98,Hungary,98,98 - Hungary
+257,99,Iceland,99,99 - Iceland
+-3,Not Applicable,Not Applicable,NA,Unknown
+-2,Unknown,Unknown,UNK,Unknown
+-1,Unspecified,Unspecified,NS,Unknown

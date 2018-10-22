@@ -1,0 +1,80 @@
+dimProvince_SK,dimProvince_BK,dimCountry_SK,dimCountry_BK,Province Code,Province Desc,Province,Province Short Name
+-1,Unspecified,-1,Unspecified,NS,Unspecified,Unknown,Unspecified
+10,AA,-1,NULL,AA,Armed Forces Atlantic,AA - Armed Forces Atlantic,NULL
+12,AE,-1,NULL,AE,Armed Forces Europe,AE - Armed Forces Europe,NULL
+13,AK,-1,NULL,AK,Alaska,AK - Alaska,NULL
+14,AL,-1,NULL,AL,Alabama,AL - Alabama,NULL
+15,AP,-1,NULL,AP,Armed Forces Pacific,AP - Armed Forces Pacific,NULL
+16,AR,-1,NULL,AR,Arkansas,AR - Arkansas,NULL
+17,AS,-1,NULL,AS,American Samoa,AS - American Samoa,NULL
+18,AZ,-1,NULL,AZ,Arizona,AZ - Arizona,NULL
+20,CA,-1,NULL,CA,California,CA - California,NULL
+21,CO,-1,NULL,CO,Colorado,CO - Colorado,NULL
+22,CT,-1,NULL,CT,Connecticut,CT - Connecticut,NULL
+23,DC,-1,NULL,DC,District of Columbia,DC - District of Columbia,NULL
+24,DE,-1,NULL,DE,Delaware,DE - Delaware,NULL
+25,FL,-1,NULL,FL,Florida,FL - Florida,NULL
+26,FM,-1,NULL,FM,Micronesia,FM - Micronesia,NULL
+27,GA,-1,NULL,GA,Georgia,GA - Georgia,NULL
+28,GU,-1,NULL,GU,Guam,GU - Guam,NULL
+29,HI,-1,NULL,HI,Hawaii,HI - Hawaii,NULL
+30,IA,-1,NULL,IA,Iowa,IA - Iowa,NULL
+31,ID,-1,NULL,ID,Idaho,ID - Idaho,NULL
+32,IL,-1,NULL,IL,Illinois,IL - Illinois,NULL
+33,IN,-1,NULL,IN,Indiana,IN - Indiana,NULL
+34,KS,-1,NULL,KS,Kansas,KS - Kansas,NULL
+35,KY,-1,NULL,KY,Kentucky,KY - Kentucky,NULL
+36,LA,-1,NULL,LA,Louisiana,LA - Louisiana,NULL
+37,MA,-1,NULL,MA,Massachusetts,MA - Massachusetts,NULL
+39,MD,-1,NULL,MD,Maryland,MD - Maryland,NULL
+40,ME,-1,NULL,ME,Maine,ME - Maine,NULL
+41,MH,-1,NULL,MH,Marshall Islands,MH - Marshall Islands,NULL
+42,MI,-1,NULL,MI,Michigan,MI - Michigan,NULL
+43,MN,-1,NULL,MN,Minnesota,MN - Minnesota,NULL
+44,MO,-1,NULL,MO,Missouri,MO - Missouri,NULL
+45,MP,-1,NULL,MP,North Mariana Islands,MP - North Mariana Islands,NULL
+46,MS,-1,NULL,MS,Mississippi,MS - Mississippi,NULL
+47,MT,-1,NULL,MT,Montana,MT - Montana,NULL
+49,NC,-1,NULL,NC,North Carolina,NC - North Carolina,NULL
+50,ND,-1,NULL,ND,North Dakota,ND - North Dakota,NULL
+51,NE,-1,NULL,NE,Nebraska,NE - Nebraska,NULL
+52,NH,-1,NULL,NH,New Hampshire,NH - New Hampshire,NULL
+53,NJ,-1,NULL,NJ,New Jersey,NJ - New Jersey,NULL
+55,NM,-1,NULL,NM,New Mexico,NM - New Mexico,NULL
+59,NV,-1,NULL,NV,Nevada,NV - Nevada,NULL
+60,NY,-1,NULL,NY,New York,NY - New York,NULL
+61,OH,-1,NULL,OH,Ohio,OH - Ohio,NULL
+62,OK,-1,NULL,OK,Oklahoma,OK - Oklahoma,NULL
+64,OR,-1,NULL,OR,Oregon,OR - Oregon,NULL
+65,PA,-1,NULL,PA,Pennsylvania,PA - Pennsylvania,NULL
+67,PR,-1,NULL,PR,Puerto Rico,PR - Puerto Rico,NULL
+68,PW,-1,NULL,PW,Palau,PW - Palau,NULL
+70,RI,-1,NULL,RI,Rhode Island,RI - Rhode Island,NULL
+71,SC,-1,NULL,SC,South Carolina,SC - South Carolina,NULL
+72,SD,-1,NULL,SD,South Dakota,SD - South Dakota,NULL
+74,TN,-1,NULL,TN,Tennessee,TN - Tennessee,NULL
+75,TX,-1,NULL,TX,Texas,TX - Texas,NULL
+76,UM,-1,NULL,UM,Minor Outlying Islands,UM - Minor Outlying Islands,NULL
+77,UT,-1,NULL,UT,Utah,UT - Utah,NULL
+78,VA,-1,NULL,VA,Virginia,VA - Virginia,NULL
+79,VI,-1,NULL,VI,Virgin Islands,VI - Virgin Islands,NULL
+80,VT,-1,NULL,VT,Vermont,VT - Vermont,NULL
+81,WA,-1,NULL,WA,Washington,WA - Washington,NULL
+82,WI,-1,NULL,WI,Wisconsin,WI - Wisconsin,NULL
+83,WV,-1,NULL,WV,West Virginia,WV - West Virginia,NULL
+84,WY,-1,NULL,WY,Wyoming,WY - Wyoming,NULL
+-3,Not Applicable,-3,Not Applicable,NA,Not Applicable,Unknown,Not Applicable
+-2,Unknown,-2,Unknown,UNK,Unknown,Unknown,Unknown
+11,AB,200,37,AB,Alberta,AB - Alberta,NULL
+19,BC,200,37,BC,British Columbia,BC - British Columbia,NULL
+38,MB,200,37,MB,Manitoba,MB - Manitoba,NULL
+48,NB,200,37,NB,New Brunswick,NB - New Brunswick,NULL
+54,NL,200,37,NL,Newfoundland and Labrador,NL - Newfoundland and Labrador,NULL
+56,NS,200,37,NS,Nova Scotia,NS - Nova Scotia,NULL
+57,NT,200,37,NT,Northwest Territories,NT - Northwest Territories,NULL
+58,NU,200,37,NU,Nunavut,NU - Nunavut,NULL
+63,ON,200,37,ON,Ontario,ON - Ontario,NULL
+66,PE,200,37,PE,Prince Edward Island,PE - Prince Edward Island,NULL
+69,QC,200,37,QC,Québec,QC - Québec,NULL
+73,SK,200,37,SK,Saskatchewan,SK - Saskatchewan,NULL
+85,YT,200,37,YT,Yukon,YT - Yukon,NULL
