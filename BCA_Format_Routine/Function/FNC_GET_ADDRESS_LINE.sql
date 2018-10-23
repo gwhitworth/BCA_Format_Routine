@@ -5,12 +5,11 @@ Function: FNC_GET_ADDRESS_LINE
 
 Purpose: This is a function to divide the freeform from address into different lines (at most 5)
 
-Parameter: pv_freeform_address, pv_line_length, pv_line_number
+Parameter: p_freeform_address, p_line_length, p_line_number
 
-Return/result: an address line with fixed line length
-            remark: the whole word won't be truncated i.e. the line of length maybe shorter
+Return/result: an address line can be any length
 
-Assumption: The parameter of park_folio_id has been formated.
+Assumption: None
 
 Modified History:
 Version         Date		Purpose				Author
@@ -19,14 +18,14 @@ Version         Date		Purpose				Author
 *********************************************************************************************************************/
 CREATE FUNCTION [dbo].[FNC_GET_ADDRESS_LINE]
 (
-	@p_Address VARCHAR,
+	@p_Address VARCHAR(500),
 	@p_line_length INT, 
 	@p_line_number INT
 )
-RETURNS VARCHAR
+RETURNS VARCHAR(500)
 AS
 BEGIN
-	DECLARE @RtnStr		VARCHAR,
+	DECLARE @RtnStr		VARCHAR(500),
 			@addr		VARCHAR(2000),
 			@start		INT,
 			@end		INT

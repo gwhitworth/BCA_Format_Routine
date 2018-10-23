@@ -61,18 +61,19 @@
     <Folder Include="Function" />
     <Folder Include="Oracle Source" />
     <Folder Include="Testing Data" />
+    <Folder Include="Procedures" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Function\FNC_FORMAT_ADDRESS.sql" />
-    <Build Include="Table\CreateNameAddressLineTbl.sql" />
-    <Build Include="Table\dbo.CreateNameAddressTbl.sql" />
+    <None Include="Table\CreateNameAddressLineTbl.sql" />
+    <None Include="Table\dbo.CreateNameAddressTbl.sql" />
     <None Include="Function\FNC_PREPEND_DATA.sql" />
     <None Include="Function\FNC_APPEND_CRLF.sql" />
     <None Include="Function\FNC_APPEND_DATA.sql" />
     <None Include="Function\GET_FORMAT_LINE.sql" />
     <None Include="Function\FNC_SET_COUNTRY.sql" />
-    <Build Include="Table\dbo.dimProvinceTbl.sql" />
-    <Build Include="Table\dbo.dimCountryTbl.sql" />
+    <None Include="Table\dbo.dimProvinceTbl.sql" />
+    <None Include="Table\dbo.dimCountryTbl.sql" />
     <None Include="Function\FNC_SET_PROVINCE.sql" />
     <None Include="Function\FNC_SET_POSTAL.sql" />
     <None Include="Function\CondStr.sql" />
@@ -86,5 +87,9 @@
     <None Include="Oracle Source\PKG_FORMAT_OWNER_ADDRESS" />
     <None Include="Testing Data\CountryData.csv" />
     <None Include="Testing Data\ProvData.csv" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Procedures\SP_LOG_ERROR.sql" />
+    <None Include="Table\FormattingErrorLog_CreateTable.sql" />
   </ItemGroup>
 </Project>

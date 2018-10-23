@@ -16,12 +16,12 @@ GO
 --*********************************************************************************
 CREATE FUNCTION [dbo].[CondStr]
 (
-	@p_Str VARCHAR
+	@p_Str VARCHAR(500)
 )
-RETURNS VARCHAR
+RETURNS VARCHAR(500)
 AS
 BEGIN
-	DECLARE @rtnStr VARCHAR,
+	DECLARE @rtnStr VARCHAR(500),
 			@SpacesExist INT = 0
 
 	IF @p_Str IS NULL

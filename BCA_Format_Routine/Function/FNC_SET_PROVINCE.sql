@@ -18,7 +18,7 @@ Version                     Date		Purpose				Author
 *********************************************************************************************************************/
 CREATE FUNCTION [dbo].[FNC_SET_PROVINCE]
 (
-	@p_province_state VARCHAR
+	@p_province_state VARCHAR(20)
 )
 RETURNS VARCHAR(10)
 AS

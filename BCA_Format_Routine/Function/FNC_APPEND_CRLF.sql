@@ -18,8 +18,8 @@ Version                      Date			Purpose				Author
 *********************************************************************************************************************/
 CREATE FUNCTION [dbo].[FNC_APPEND_CRLF]
 (
-	@p_temp		VARCHAR, 
-	@p_source	VARCHAR
+	@p_temp		VARCHAR(500), 
+	@p_source	VARCHAR(500)
 )
 RETURNS VARCHAR(500)
 AS

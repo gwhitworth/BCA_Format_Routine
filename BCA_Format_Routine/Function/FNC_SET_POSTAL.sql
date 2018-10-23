@@ -18,8 +18,8 @@ Version     Date		Purpose				Author
 *********************************************************************************************************************/
 CREATE FUNCTION [dbo].[FNC_SET_POSTAL]
 (
-	@p_country VARCHAR, 
-	@p_postal_zip VARCHAR
+	@p_country VARCHAR(500), 
+	@p_postal_zip VARCHAR(20)
 )
 RETURNS VARCHAR(20)
 AS

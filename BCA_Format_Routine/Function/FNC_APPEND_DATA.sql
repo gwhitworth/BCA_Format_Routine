@@ -19,8 +19,8 @@ Version		Date			Purpose				Author
 *********************************************************************************************************************/
 CREATE FUNCTION [dbo].[FNC_APPEND_DATA]
 (
-	@p_temp		VARCHAR, 
-	@p_suffix	VARCHAR
+	@p_temp		VARCHAR(500), 
+	@p_suffix	VARCHAR(500)
 )
 RETURNS VARCHAR(255)
 AS

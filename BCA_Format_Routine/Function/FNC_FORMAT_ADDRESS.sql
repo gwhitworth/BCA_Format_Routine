@@ -15,7 +15,6 @@ Modified History:
 Author.....................Date...........Purpose.............Developer
 ---------------------------------------------------------------------------------------------------------------------
 1.0........................Nov 2018......original build       Gerry Whitworth
-
 *********************************************************************************************************************/
 CREATE FUNCTION [dbo].[FNC_FORMAT_ADDRESS]
 (
@@ -48,15 +47,20 @@ BEGIN
 	-- freeform address
 	DECLARE @Freeform_list TABLE
 	(
+		RowID int not null primary key identity(1,1),
 		AddressLine varchar(255)
 	)
+	DECLARE @RowsToProcess  int
+	DECLARE @CurrentRow     int
+	DECLARE @SelectCol1     int
+
 	DECLARE @rtnValue	varchar(max),
 			@addr1		varchar(255),
 			@addr2		varchar(255),
 			@addr3		varchar(255),
 			@addr4		varchar(255),
 			@addr5		varchar(255),
-			@address	varchar(255),
+			@address	varchar(500),
 			@overflow	varchar(255),
 			@tmpStr		varchar(500),
 			@CRLFExist  int = 0,
@@ -164,6 +168,66 @@ BEGIN
 				END --ELSE
 			END --IF
 		END --LOOP
-	END -- 1st carriage return
+	END -- ELSE **1st carriage return
+
+	SET @RowsToProcess = @@ROWCOUNT
+	SET @CurrentRow = 0
+	WHILE @CurrentRow < @RowsToProcess
+	BEGIN
+		SET @CurrentRow = @CurrentRow + 1
+		SELECT 
+			@SelectCol1 = AddressLine
+			FROM @Freeform_list
+			WHERE RowID = @CurrentRow
+		IF ((@SelectCol1 <> '') OR LEN(@SelectCol1) > 0)
+			SET @address = dbo.FNC_APPEND_CRLF(@address, @SelectCol1);
+	END --WHILE
+
+	SET @address = dbo.FNC_APPEND_CRLF(@address, @addr1)
+	SET @address = dbo.FNC_APPEND_CRLF(@address, @addr2)
+	SET @address = dbo.FNC_APPEND_CRLF(@address, @addr3)
+	--in case the end of freeform address having crlf (i.e. double up in the address line), so clean out the duplicated crlf
+	SET @address = dbo.CLEAN_CRLF(@address)
+
+	IF (@addr4 IS NOT NULL AND @P_CITY IS NULL AND @P_PROVINCE_STATE IS NULL AND @P_POSTAL_ZIP IS NOT NULL)
+		SET @address = @address + '     ' + @addr4
+	ELSE IF @addr4 IS NOT NULL
+		SET @address = dbo.FNC_APPEND_CRLF(@address, @addr4)
+	ELSE
+		SET @address = TRIM(@address);
+
+	SET @address = dbo.FNC_APPEND_CRLF(@address, @addr5)
+
+	--overflow will be displayed at the end of freeform
+	SET @address = dbo.FNC_APPEND_CRLF(@address, @overflow)
+
+	--in case if crlf at the start of address line
+	IF SUBSTRING(@address, 1, 1) = CHAR(13) OR SUBSTRING(@address, 1, 1) = CHAR(10)
+		SET @address = SUBSTRING(@address, 2, LEN(@address));
+
+	IF SUBSTRING(@address, 1, 1) = CHAR(10) OR SUBSTRING(@address, 1, 1) = CHAR(13)
+		SET @address = SUBSTRING(@address, 2, LEN(@address));
+    ELSE--fixed from addr
+	BEGIN
+		SET @address = dbo.FNC_APPEND_CRLF(@address, @overflow);
+		SET @address = dbo.FNC_APPEND_CRLF(@address, @addr1);
+		SET @address = dbo.FNC_APPEND_CRLF(@address, @addr2);
+		SET @address = dbo.FNC_APPEND_CRLF(@address, @addr3);
+		SET @address = dbo.FNC_APPEND_CRLF(@address, @addr4);
+		SET @address = dbo.FNC_APPEND_CRLF(@address, @addr5);
+	END --ELSE
+
+	--if pv_line_number is null or 0 return the whole address within length
+    IF @p_line_number IS NULL OR @p_line_number = 0  
+		SET @rtnValue = UPPER(TRIM(dbo.FNC_CHECK_LEN(@address, @p_line_length)))
+    ELSE --return the line of addr according to the line number
+      SET @rtnValue = UPPER(TRIM(dbo.FNC_GET_ADDRESS_LINE(@address, @p_line_length, @p_line_number)))
+
+	IF @@ERROR <> 0
+	BEGIN
+		EXEC [dbo].[SP_LOG_ERROR](SELECT ERROR_MESSAGE,ERROR_STATE, ERROR_SEVERITY)
+		RETURN NULL
+	END
+
 	RETURN @rtnValue
 END

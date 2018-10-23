@@ -17,12 +17,12 @@ GO
 --*********************************************************************************
 CREATE FUNCTION [dbo].[CLEAN_CRLF]
 (
-	@p_Str VARCHAR
+	@p_Str VARCHAR(500)
 )
-RETURNS VARCHAR
+RETURNS VARCHAR(500)
 AS
 BEGIN
-	DECLARE @rtnStr VARCHAR,
+	DECLARE @rtnStr VARCHAR(500),
 			@CRLFExist INT = 0
 
 	IF @p_Str IS NULL

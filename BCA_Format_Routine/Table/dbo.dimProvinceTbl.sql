@@ -1,4 +1,6 @@
-﻿CREATE TABLE [dbo].[dimProvinceTbl] (
+﻿DROP TABLE IF EXISTS [dbo].[dimProvinceTbl]
+GO
+CREATE TABLE [dbo].[dimProvinceTbl] (
     [dimProvince_SK]      INT           NOT NULL,
     [dimProvince_BK]      NVARCHAR (50) NOT NULL,
     [dimCountry_SK]       INT           NULL,

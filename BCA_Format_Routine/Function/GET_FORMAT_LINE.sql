@@ -16,11 +16,11 @@ GO
 --*********************************************************************************
 CREATE FUNCTION [dbo].[GET_FORMAT_LINE]
 (
-	@p_inputStr		VARCHAR,
+	@p_inputStr		VARCHAR(500),
 	@p_inputLength  INT,
 	@p_inputLineNo  INT
 )
-RETURNS VARCHAR
+RETURNS VARCHAR(500)
 AS
 BEGIN
 	DECLARE @ReturnStr  VARCHAR(2000),
