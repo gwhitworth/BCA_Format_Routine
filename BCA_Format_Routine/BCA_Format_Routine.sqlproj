@@ -62,6 +62,7 @@
     <Folder Include="Oracle Source" />
     <Folder Include="Testing Data" />
     <Folder Include="Procedures" />
+    <Folder Include="Script" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Function\FNC_FORMAT_ADDRESS.sql" />
@@ -80,6 +81,7 @@
     <None Include="Function\CLEAN_CRLF.sql" />
     <None Include="Function\FNC_GET_ADDRESS_LINE.sql" />
     <None Include="Function\FNC_CHECK_LEN.sql" />
+    <None Include="Script\TestFormatAddress.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Testing Data\NameAddressData.csv" />
@@ -91,5 +93,11 @@
   <ItemGroup>
     <None Include="Procedures\SP_LOG_ERROR.sql" />
     <None Include="Table\FormattingErrorLog_CreateTable.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Procedures\SP_TEST_FORMAT_ADDRESS.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Procedures\SP_TEST_FORMAT_ONE_ADDRESS.sql" />
   </ItemGroup>
 </Project>

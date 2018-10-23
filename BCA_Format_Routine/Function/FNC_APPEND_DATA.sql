@@ -19,17 +19,18 @@ Version		Date			Purpose				Author
 *********************************************************************************************************************/
 CREATE FUNCTION [dbo].[FNC_APPEND_DATA]
 (
-	@p_temp		VARCHAR(500), 
-	@p_suffix	VARCHAR(500)
+	@p_temp		VARCHAR(500) = '', 
+	@p_suffix	VARCHAR(500) = ''
 )
 RETURNS VARCHAR(255)
 AS
 BEGIN
-	DECLARE @rtnVal VARCHAR(255)
+	DECLARE @rtnVal VARCHAR(255) = ''
+
 	IF @p_temp IS NOT NULL
-	   SET @rtnVal = upper(trim(@p_temp)) + @p_suffix;
+	   SET @rtnVal = UPPER(TRIM(dbo.CondStr(@p_temp))) + @p_suffix;
 	ELSE
-	   SET @rtnVal = NULL
+	   SET @rtnVal = ''
 
 	IF @@ERROR <> 0
 		RETURN NULL

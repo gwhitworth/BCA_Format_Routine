@@ -19,12 +19,13 @@ Version     Date		Purpose				Author
 CREATE FUNCTION [dbo].[FNC_SET_POSTAL]
 (
 	@p_country VARCHAR(500), 
-	@p_postal_zip VARCHAR(20)
+	@p_postal_zip VARCHAR(20) = ''
 )
 RETURNS VARCHAR(20)
 AS
 BEGIN
-	DECLARE @rtnPostal VARCHAR(20)
+	DECLARE @rtnPostal VARCHAR(20) = ''
+
 	IF @p_country IS NOT NULL
 	BEGIN
 		IF @p_country = '37' OR @p_country = '226'

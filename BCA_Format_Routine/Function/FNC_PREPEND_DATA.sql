@@ -19,16 +19,16 @@ Version                      Date			Purpose				Author
 *********************************************************************************************************************/
 CREATE FUNCTION [dbo].[FNC_PREPEND_DATA]
 (
-	@p_temp		VARCHAR(500), 
-	@p_prefix	VARCHAR(500)
+	@p_temp		VARCHAR(500) = '', 
+	@p_prefix	VARCHAR(500) = ''
 )
 RETURNS VARCHAR(255)
 AS
 BEGIN
-	DECLARE @rtnVal VARCHAR(255)
+	DECLARE @rtnVal VARCHAR(255) = ''
 
 	IF @p_temp IS NOT NULL
-		SET @rtnVal = @p_prefix + upper(trim(@p_temp))
+		SET @rtnVal = @p_prefix + upper(trim(dbo.CondStr(@p_temp)))
 	ELSE
 		SET @rtnVal = NULL
 

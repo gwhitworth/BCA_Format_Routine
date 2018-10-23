@@ -18,15 +18,15 @@ Version         Date		Purpose				Author
 *********************************************************************************************************************/
 CREATE FUNCTION [dbo].[FNC_GET_ADDRESS_LINE]
 (
-	@p_Address VARCHAR(500),
+	@p_Address VARCHAR(500) = '',
 	@p_line_length INT, 
 	@p_line_number INT
 )
 RETURNS VARCHAR(500)
 AS
 BEGIN
-	DECLARE @RtnStr		VARCHAR(500),
-			@addr		VARCHAR(2000),
+	DECLARE @RtnStr		VARCHAR(500) = '',
+			@addr		VARCHAR(2000) = '',
 			@start		INT,
 			@end		INT
 

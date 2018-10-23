@@ -5,9 +5,14 @@ Function: dbo.FNC_FORMAT_ADDRESS
 
 Purpose: This is a common function to format owner address
 
-Parameter:
+Parameter:	@p_City, @p_Country, @p_Freeform_Address, @p_Directional,
+			@p_Postal_zip, @p_Province_State, @p_Street_Name,
+			@p_Street_Number, @p_Street_Type, @p_Unit_Number, @p_Address_Floor,
+			@p_Address_CO, @p_Address_Attention, @p_Address_Site, @p_Address_Comp,
+			@p_Address_Mod, @p_Address_Mod_Value, @p_Address_Dim, @p_Address_Dim_Value,
+			@p_line_length,	@p_Line_Number
 
-Return/result: an address line
+Return/result: Requested Address line
 
 Assumption: none
 
@@ -21,9 +26,8 @@ CREATE FUNCTION [dbo].[FNC_FORMAT_ADDRESS]
 	@p_City					varchar(50),
 	@p_Country				varchar(50),
 	@p_Freeform_Address		varchar(500),
-	@p_Post_Directional		varchar(50),
+	@p_Directional			varchar(50),
 	@p_Postal_zip			varchar(10),
-	@p_Pre_Directional		varchar(50),
 	@p_Province_State		varchar(50),
 	@p_Street_Name			varchar(50),
 	@p_Street_Number		varchar(50),
@@ -38,8 +42,8 @@ CREATE FUNCTION [dbo].[FNC_FORMAT_ADDRESS]
 	@p_Address_Mod_Value	varchar(50),
 	@p_Address_Dim			varchar(50),
 	@p_Address_Dim_Value	varchar(50),
-	@p_line_length			varchar(50),
-	@p_Line_Number			varchar(50)
+	@p_line_length			int,
+	@p_Line_Number			int
 )
 RETURNS varchar(max)
 AS
@@ -54,29 +58,28 @@ BEGIN
 	DECLARE @CurrentRow     int
 	DECLARE @SelectCol1     int
 
-	DECLARE @rtnValue	varchar(max),
-			@addr1		varchar(255),
-			@addr2		varchar(255),
-			@addr3		varchar(255),
-			@addr4		varchar(255),
-			@addr5		varchar(255),
-			@address	varchar(500),
-			@overflow	varchar(255),
-			@tmpStr		varchar(500),
+	DECLARE @rtnValue	varchar(max) = '',
+			@addr1		varchar(255) = '',
+			@addr2		varchar(255) = '',
+			@addr3		varchar(255) = '',
+			@addr4		varchar(255) = '',
+			@addr5		varchar(255) = '',
+			@address	varchar(500) = '',
+			@overflow	varchar(255) = '',
+			@tmpStr		varchar(500) = '',
 			@CRLFExist  int = 0,
-			@tmpFreeF	varchar(255),
+			@tmpFreeF	varchar(255) = '',
 			@i			int = 0;
 
-
-	SET @rtnValue = ''
 	SET @address = dbo.FNC_PREPEND_DATA(@p_Address_CO, 'C/O ')
 	SET @address = dbo.FNC_APPEND_CRLF(@address, (dbo.FNC_PREPEND_DATA(@p_Address_Attention, 'ATTN ')))
 
 	SET @addr1 = trim(@addr1 + dbo.FNC_APPEND_DATA(@p_Street_Number, ' ') +
-					dbo.FNC_APPEND_DATA(@p_Pre_Directional, ' ') +
+					--dbo.FNC_APPEND_DATA(@p_Pre_Directional, ' ') +
 					dbo.FNC_APPEND_DATA(@p_Street_Name, ' ') +
 					dbo.FNC_APPEND_DATA(@p_street_type, ' ') +
-					dbo.FNC_APPEND_DATA(@p_post_directional, ' '))
+					--dbo.FNC_APPEND_DATA(@p_post_directional, ' '))
+					dbo.FNC_APPEND_DATA(@p_directional, ' '))
     
 	--If this isn't a US address
 	IF (@p_country <> '226')  
@@ -132,6 +135,7 @@ BEGIN
 				WHILE @i <= 5
 				BEGIN
 					INSERT INTO @Freeform_list VALUES(dbo.GET_FORMAT_LINE(@tmpStr, @p_line_length, @i))
+					SET @i = @i + 1
 				END --LOOP
 			END --IF
 			ELSE
@@ -142,6 +146,7 @@ BEGIN
 				WHILE @i <= 5
 				BEGIN
 					INSERT INTO @Freeform_list VALUES(dbo.GET_FORMAT_LINE(@tmpStr, @p_line_length, @i))
+					SET @i = @i + 1
 				END --LOOP
 			END --ELSE
 		END  --IF
@@ -225,7 +230,6 @@ BEGIN
 
 	IF @@ERROR <> 0
 	BEGIN
-		EXEC [dbo].[SP_LOG_ERROR](SELECT ERROR_MESSAGE,ERROR_STATE, ERROR_SEVERITY)
 		RETURN NULL
 	END
 

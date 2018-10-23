@@ -19,17 +19,17 @@ Version		Date		Purpose				Author
 *********************************************************************************************************************/
 CREATE FUNCTION [dbo].[FNC_CHECK_LEN]
 (
-	@p_temp VARCHAR(500), 
+	@p_temp VARCHAR(500) = '', 
 	@p_line_length INT
 )
 RETURNS VARCHAR(500)
 AS
 BEGIN
-	DECLARE @RtnStr		VARCHAR(500),
+	DECLARE @RtnStr		VARCHAR(500) = '',
 			@len		INT,
 			@start		INT,
 			@end		INT,
-			@addr		varchar(2000),
+			@addr		varchar(2000) = '',
 			@i			INT
 
 	IF LEN(@p_temp) <= @p_line_length

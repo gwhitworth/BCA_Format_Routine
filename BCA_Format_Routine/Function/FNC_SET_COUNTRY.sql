@@ -18,7 +18,7 @@ Version                    Date				Purpose				Author
 *********************************************************************************************************************/
 CREATE FUNCTION [dbo].[FNC_SET_COUNTRY]
 (
-	@p_country VARCHAR(10)
+	@p_country VARCHAR(10) = ''
 )
 RETURNS VARCHAR(30)
 AS
@@ -32,5 +32,5 @@ BEGIN
 			WHERE Country_Code = @p_country
 	END
 
-	RETURN upper(trim(@country))
+	RETURN UPPER(TRIM(@country))
 END

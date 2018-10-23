@@ -15,23 +15,19 @@ GO
 
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[NAME_ADDRESS_LINES]') AND type in (N'U'))
 BEGIN
-CREATE TABLE [dbo].[NAME_ADDRESS_LINES](
-	[dimFolio_SK] [int] NOT NULL,
-	[dimRollYear] [int] NOT NULL,
-	[dimFolio_BK] [varchar](255) NOT NULL,
-	[NAME_LINE1] [varchar](35) NOT NULL,
-	[NAME_LINE2] [varchar](35) NOT NULL,
-	[ADRS_LINE1] [varchar](35) NOT NULL,
-	[ADRS_LINE2] [varchar](35) NOT NULL,
-	[ADRS_LINE3] [varchar](35) NOT NULL,
-	[ADRS_LINE4] [varchar](35) NOT NULL,
-	[ADRS_LINE5] [varchar](35) NOT NULL,
-	[DateTimeStamp] [datetime] NOT NULL,
- CONSTRAINT [PK_NAME_ADDRESS_LINES] PRIMARY KEY CLUSTERED 
-(
-	[dimFolio_SK] ASC,
-	[dimRollYear] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+CREATE TABLE [dbo].[NAME_ADDRESS_LINES] (
+    [dimFolio_SK]   INT           NOT NULL,
+    [dimRollYear]   INT           NOT NULL,
+    [dimFolio_BK]   VARCHAR (255) NOT NULL,
+    [NAME_LINE1]    VARCHAR (35)  NULL,
+    [NAME_LINE2]    VARCHAR (35)  NULL,
+    [ADRS_LINE1]    VARCHAR (35)  NULL,
+    [ADRS_LINE2]    VARCHAR (35)  NULL,
+    [ADRS_LINE3]    VARCHAR (35)  NULL,
+    [ADRS_LINE4]    VARCHAR (35)  NULL,
+    [ADRS_LINE5]    VARCHAR (35)  NULL,
+    [DateTimeStamp] DATETIME      CONSTRAINT [DF_NAME_ADDRESS_LINES_DateTimeStamp] DEFAULT (getdate()) NOT NULL,
+    CONSTRAINT [PK_NAME_ADDRESS_LINES] PRIMARY KEY CLUSTERED ([dimFolio_SK] ASC, [dimRollYear] ASC)
 )
 END
 GO
