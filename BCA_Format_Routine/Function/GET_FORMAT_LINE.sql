@@ -23,8 +23,8 @@ CREATE FUNCTION [dbo].[GET_FORMAT_LINE]
 RETURNS VARCHAR(500)
 AS
 BEGIN
-	DECLARE @ReturnStr  VARCHAR(2000),
-			@tempStr    VARCHAR(2000),
+	DECLARE @ReturnStr  VARCHAR(2000) = '',
+			@tempStr    VARCHAR(2000) = '',
 			@StartPos   INT,
 			@SpacePos   INT,
 			@ThisPos    INT,

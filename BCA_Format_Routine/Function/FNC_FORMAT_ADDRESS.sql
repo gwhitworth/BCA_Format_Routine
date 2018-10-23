@@ -26,12 +26,12 @@ CREATE FUNCTION [dbo].[FNC_FORMAT_ADDRESS]
 	@p_City					varchar(50),
 	@p_Country				varchar(50),
 	@p_Freeform_Address		varchar(500),
-	@p_Directional			varchar(50),
+	@p_Directional			varchar(50) = '',
 	@p_Postal_zip			varchar(10),
 	@p_Province_State		varchar(50),
-	@p_Street_Name			varchar(50),
-	@p_Street_Number		varchar(50),
-	@p_Street_Type			varchar(50),
+	@p_Street_Name			varchar(50) = '',
+	@p_Street_Number		varchar(50) = '',
+	@p_Street_Type			varchar(50) = '',
 	@p_Unit_Number			varchar(50),
 	@p_Address_Floor		varchar(50),
 	@p_Address_CO			varchar(50),
@@ -49,26 +49,26 @@ RETURNS varchar(max)
 AS
 BEGIN
 	-- freeform address
-	DECLARE @Freeform_list TABLE
+	DECLARE @Freeform_Table TABLE
 	(
 		RowID int not null primary key identity(1,1),
 		AddressLine varchar(255)
 	)
-	DECLARE @RowsToProcess  int
-	DECLARE @CurrentRow     int
-	DECLARE @SelectCol1     int
+	DECLARE @RowsToProcess  int,
+			@CurrentRow     int,
+			@SelectCol1     varchar(255)
 
 	DECLARE @rtnValue	varchar(max) = '',
+			@address	varchar(500) = '',
 			@addr1		varchar(255) = '',
 			@addr2		varchar(255) = '',
 			@addr3		varchar(255) = '',
 			@addr4		varchar(255) = '',
 			@addr5		varchar(255) = '',
-			@address	varchar(500) = '',
 			@overflow	varchar(255) = '',
 			@tmpStr		varchar(500) = '',
-			@CRLFExist  int = 0,
 			@tmpFreeF	varchar(255) = '',
+			@CRLFExist  int = 0,
 			@i			int = 0;
 
 	SET @address = dbo.FNC_PREPEND_DATA(@p_Address_CO, 'C/O ')
@@ -134,20 +134,20 @@ BEGIN
 				SET @tmpStr = '';
 				WHILE @i <= 5
 				BEGIN
-					INSERT INTO @Freeform_list VALUES(dbo.GET_FORMAT_LINE(@tmpStr, @p_line_length, @i))
+					INSERT INTO @Freeform_Table (AddressLine) VALUES(dbo.GET_FORMAT_LINE(@tmpStr, @p_line_length, @i))
 					SET @i = @i + 1
 				END --LOOP
 			END --IF
 			ELSE
 			BEGIN
 				SET @tmpStr = ''
-				INSERT INTO @Freeform_list VALUES(dbo.GET_FORMAT_LINE(@tmpStr, @p_line_length, @i))
+				INSERT INTO @Freeform_Table (AddressLine) VALUES(dbo.GET_FORMAT_LINE(@tmpStr, @p_line_length, @i))
 				SET @i = 2
 				WHILE @i <= 5
 				BEGIN
-					INSERT INTO @Freeform_list VALUES(dbo.GET_FORMAT_LINE(@tmpStr, @p_line_length, @i))
+					INSERT INTO @Freeform_Table (AddressLine) VALUES(dbo.GET_FORMAT_LINE(@tmpStr, @p_line_length, @i))
 					SET @i = @i + 1
-				END --LOOP
+				END --WHILE
 			END --ELSE
 		END  --IF
 	END --IF
@@ -160,29 +160,32 @@ BEGIN
 				IF @CRLFExist > @p_line_length + 1
 				BEGIN
 					SET @tmpFreeF = dbo.GET_FORMAT_LINE(@tmpStr, @p_line_length, 1)
-					INSERT INTO @Freeform_list VALUES(@tmpFreeF)
+					INSERT INTO @Freeform_Table (AddressLine) VALUES(@tmpFreeF)
+					--INSERT INTO @Freeform_Table (AddressLine) VALUES('JUNK')
 					SET @tmpStr = SUBSTRING(@tmpStr, LEN(@tmpFreeF)+1,LEN(@tmpStr))
 					SET @tmpStr = dbo.clean_crlf(@tmpStr)
 					SET @CRLFExist = CHARINDEX(@tmpStr, CHAR(13) + CHAR(10))
 				END --IF
 				ELSE
 				BEGIN
-					INSERT INTO @Freeform_list VALUES(SUBSTRING(@tmpStr, 1, @CRLFExist-1))
+					INSERT INTO @Freeform_Table (AddressLine) VALUES(SUBSTRING(@tmpStr, 1, @CRLFExist-1))
+					--INSERT INTO @Freeform_Table (AddressLine) VALUES('JUNK2')
 					SET @tmpStr		= SUBSTRING(@tmpStr, @CRLFExist+2, LEN(@tmpStr))
 					SET @CRLFExist	= CHARINDEX(@tmpStr, CHAR(13) + CHAR(10))
 				END --ELSE
 			END --IF
-		END --LOOP
+			SET @i = @i + 1
+		END --WHILE
 	END -- ELSE **1st carriage return
 
-	SET @RowsToProcess = @@ROWCOUNT
+	SELECT @RowsToProcess = COUNT(*) FROM @Freeform_Table
 	SET @CurrentRow = 0
 	WHILE @CurrentRow < @RowsToProcess
 	BEGIN
 		SET @CurrentRow = @CurrentRow + 1
 		SELECT 
 			@SelectCol1 = AddressLine
-			FROM @Freeform_list
+			FROM @Freeform_Table
 			WHERE RowID = @CurrentRow
 		IF ((@SelectCol1 <> '') OR LEN(@SelectCol1) > 0)
 			SET @address = dbo.FNC_APPEND_CRLF(@address, @SelectCol1);

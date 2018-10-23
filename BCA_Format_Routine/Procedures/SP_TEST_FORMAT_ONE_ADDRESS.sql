@@ -43,7 +43,7 @@ BEGIN
 	SELECT TOP 1
 			@City = dimCity_BK,
 			@Country = dimCountry_BK,
-			@Freeform_Address = '',
+			@Freeform_Address = NULL,
 			@Directional = dimStreetDirection_BK,
 			@Postal_zip = Postal_Zip_Code,
 			@Province_State = dimProvince_BK,
