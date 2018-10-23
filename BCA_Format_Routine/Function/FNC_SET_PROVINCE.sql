@@ -1,4 +1,6 @@
-﻿/*********************************************************************************************************************
+﻿DROP FUNCTION IF EXISTS [dbo].[FNC_SET_PROVINCE]
+GO
+/*********************************************************************************************************************
 Function: FNC_SET_PROVINCE
 
 Purpose: This is to get the province short from by using common function Get_Abrv_Prov_State

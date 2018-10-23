@@ -1,4 +1,6 @@
-﻿/*********************************************************************************************************************
+﻿DROP FUNCTION IF EXISTS [dbo].[FNC_SET_COUNTRY]
+GO
+/*********************************************************************************************************************
 Function: FNC_SET_COUNTRY
 
 Purpose: Find the internal country from lookup table by using country code

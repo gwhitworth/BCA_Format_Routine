@@ -1,5 +1,5 @@
-﻿--DROP FUNCTION IF EXISTS [dbo].[FNC_PREPEND_DATA]
---GO
+﻿DROP FUNCTION IF EXISTS [dbo].[FNC_PREPEND_DATA]
+GO
 /*********************************************************************************************************************
 Function: FNC_PREPEND_DATA
 

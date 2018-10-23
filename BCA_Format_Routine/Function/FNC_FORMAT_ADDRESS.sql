@@ -1,5 +1,5 @@
-﻿--DROP FUNCTION IF EXISTS [dbo].[FNC_FORMAT_ADDRESS]
---GO
+﻿DROP FUNCTION IF EXISTS [dbo].[FNC_FORMAT_ADDRESS]
+GO
 /*********************************************************************************************************************
 Function: dbo.FNC_FORMAT_ADDRESS
 

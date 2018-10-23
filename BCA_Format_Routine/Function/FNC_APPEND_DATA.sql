@@ -1,4 +1,6 @@
-﻿/*********************************************************************************************************************
+﻿DROP FUNCTION IF EXISTS [dbo].[FNC_APPEND_DATA]
+GO
+/*********************************************************************************************************************
 Function: FNC_APPEND_DATA
 
 Purpose: This function is to add the required info for the address line
@@ -30,7 +32,7 @@ BEGIN
 	   SET @rtnVal = NULL
 
 	IF @@ERROR <> 0
-		RETURN (NULL);
+		RETURN NULL
 
 	RETURN @rtnVal	
 END

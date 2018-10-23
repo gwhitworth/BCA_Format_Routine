@@ -1,4 +1,6 @@
-﻿/*********************************************************************************************************************
+﻿DROP FUNCTION IF EXISTS [dbo].[FNC_GET_ADDRESS_LINE]
+GO
+/*********************************************************************************************************************
 Function: FNC_GET_ADDRESS_LINE
 
 Purpose: This is a function to divide the freeform from address into different lines (at most 5)
@@ -29,19 +31,21 @@ BEGIN
 			@start		INT,
 			@end		INT
 
-	SET @end = CHARINDEX(@p_Address, CHAR(13), 1, @p_line_number);
+	SET @end = CHARINDEX(@p_Address, CHAR(13));
 	IF @p_line_number > 1
-		SET @start = CHARINDEX(@p_Address, CHAR(10), 1, @p_line_number - 1) + 1;
+		SET @start = CHARINDEX(@p_Address, CHAR(10)) + 1;
 	ELSE--pv_line number = 1
 		SET @start = 1
 	
 	IF @end > 0
 		SET @end = @end - @start
 
-
-
-
-
+	IF @end > 0 AND @start > 0 --any line of address including 1st line
+		SET @RtnStr = dbo.FNC_CHECK_LEN(SUBSTRING(@p_Address, @start, @end), @p_line_length)
+	ELSE IF (@end = 0 AND @start > 1) OR (@end = 0 AND @start = 1 AND @p_line_number = 1) --last line or 1st line and no more another line of address
+		SET @RtnStr = dbo.FNC_CHECK_LEN(SUBSTRING(@p_Address, @start, LEN(TRIM(@p_Address))), @p_line_length)
+	ELSE --no data of address line
+		SET @RtnStr = NULL
 
 	RETURN @RtnStr
 END

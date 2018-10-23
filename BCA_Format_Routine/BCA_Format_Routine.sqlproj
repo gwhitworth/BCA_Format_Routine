@@ -63,21 +63,22 @@
     <Folder Include="Testing Data" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Function\dbo.FNC_FORMAT_ADDRESS.sql" />
+    <None Include="Function\FNC_FORMAT_ADDRESS.sql" />
     <Build Include="Table\CreateNameAddressLineTbl.sql" />
     <Build Include="Table\dbo.CreateNameAddressTbl.sql" />
-    <Build Include="Function\FNC_PREPEND_DATA.sql" />
-    <Build Include="Function\FNC_APPEND_CRLF.sql" />
-    <Build Include="Function\FNC_APPEND_DATA.sql" />
-    <Build Include="Function\GET_FORMAT_LINE.sql" />
-    <Build Include="Function\FNC_SET_COUNTRY.sql" />
+    <None Include="Function\FNC_PREPEND_DATA.sql" />
+    <None Include="Function\FNC_APPEND_CRLF.sql" />
+    <None Include="Function\FNC_APPEND_DATA.sql" />
+    <None Include="Function\GET_FORMAT_LINE.sql" />
+    <None Include="Function\FNC_SET_COUNTRY.sql" />
     <Build Include="Table\dbo.dimProvinceTbl.sql" />
     <Build Include="Table\dbo.dimCountryTbl.sql" />
-    <Build Include="Function\FNC_SET_PROVINCE.sql" />
-    <Build Include="Function\FNC_SET_POSTAL.sql" />
-    <Build Include="Function\CondStr.sql" />
-    <Build Include="Function\CLEAN_CRLF.sql" />
-    <Build Include="Function\FNC_GET_ADDRESS_LINE.sql" />
+    <None Include="Function\FNC_SET_PROVINCE.sql" />
+    <None Include="Function\FNC_SET_POSTAL.sql" />
+    <None Include="Function\CondStr.sql" />
+    <None Include="Function\CLEAN_CRLF.sql" />
+    <None Include="Function\FNC_GET_ADDRESS_LINE.sql" />
+    <None Include="Function\FNC_CHECK_LEN.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Testing Data\NameAddressData.csv" />

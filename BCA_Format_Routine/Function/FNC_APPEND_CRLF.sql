@@ -1,5 +1,5 @@
-﻿--DROP FUNCTION IF EXISTS [dbo].[FNC_APPEND_CRLF]
---GO
+﻿DROP FUNCTION IF EXISTS [dbo].[FNC_APPEND_CRLF]
+GO
 /*********************************************************************************************************************
 Function: FNC_APPEND_CRLF
 
@@ -26,7 +26,7 @@ AS
 BEGIN
 	DECLARE @rtnVal VARCHAR(500)
 	IF @p_temp IS NOT NULL AND @p_source IS NOT NULL
-		   SET @rtnVal = @p_temp + CHAR(13) + CHAR(10) + @p_source
+		SET @rtnVal = @p_temp + CHAR(13) + CHAR(10) + @p_source
 	ELSE
 		BEGIN
 		   IF @p_temp IS NULL AND @p_source IS NOT NULL
@@ -36,8 +36,9 @@ BEGIN
 		   ELSE
 				SET @rtnVal = NULL
 		END
-		IF @@ERROR <> 0
-			RETURN (NULL);
+
+	IF @@ERROR <> 0
+		RETURN NULL
 
 	RETURN @rtnVal	
 END
