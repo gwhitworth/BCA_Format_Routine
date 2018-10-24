@@ -80,7 +80,7 @@ BEGIN
 										'',
 										'',
 										2000,
-										1
+										2
 									)
 	IF @@ERROR <> 0
 	BEGIN

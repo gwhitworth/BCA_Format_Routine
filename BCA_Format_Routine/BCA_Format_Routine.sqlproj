@@ -82,6 +82,9 @@
     <None Include="Function\FNC_GET_ADDRESS_LINE.sql" />
     <None Include="Function\FNC_CHECK_LEN.sql" />
     <None Include="Script\TestFormatAddress.sql" />
+    <None Include="Oracle Source\FORMAT_ROLL_OWNER_ADDR.txt" />
+    <None Include="Oracle Source\Get_Abrv_Prov_State.txt" />
+    <None Include="Oracle Source\Get_Country.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Testing Data\NameAddressData.csv" />
@@ -99,5 +102,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\SP_TEST_FORMAT_ONE_ADDRESS.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Function\Format_Roll_Owner_Addr.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Function\Get_Abrv_Prov_State.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Function\Get_Country.sql" />
   </ItemGroup>
 </Project>

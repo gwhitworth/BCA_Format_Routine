@@ -1,0 +1,37 @@
+CREATE OR REPLACE FUNCTION BCA_APPL.Get_Country
+--******************************************************************************** 
+--* Application:   BCA COMMON
+--*
+--* Function:      Get_Country
+--*
+--* Purpose:       Given the Code return the country name.
+--*                
+--* 
+--* Maintenance Log:
+--*
+--* Ver.Rel     Date     Developer/Description
+--* -------  ----------  ---------------------------------------------------------
+--* 1.0      2005/05/32  NDP  Initial Version
+--********************************************************************************* 
+(pv_Country   VARCHAR2)
+
+RETURN VARCHAR2 AS
+   v_ReturnCode   VARCHAR2(60);
+
+BEGIN
+   
+   -- determine the country's name from the code:
+   SELECT Description 
+     INTO v_ReturnCode
+     FROM BCA_AO.AO_U_Country 
+    WHERE CODE = pv_Country;
+    
+   -- return the country name
+   RETURN(v_ReturnCode);
+
+EXCEPTION
+   WHEN OTHERS THEN 
+      RETURN v_ReturnCode;
+     
+END;
+/

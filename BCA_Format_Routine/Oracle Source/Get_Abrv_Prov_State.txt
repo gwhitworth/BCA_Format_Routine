@@ -1,0 +1,36 @@
+CREATE OR REPLACE FUNCTION BCA_APPL.Get_Abrv_Prov_State
+--******************************************************************************** 
+--* Application:   BCA COMMON
+--*
+--* Function:      GET_Abrv_Prov_State 
+--*
+--* Purpose:       Given the Province return two character abrievation.
+--*                
+--* 
+--* Maintenance Log:
+--*
+--* Ver.Rel     Date     Developer/Description
+--* -------  ----------  ---------------------------------------------------------
+--* 1.0      2005/05/32  NDP  Initial Version
+--********************************************************************************* 
+(pv_Province   VARCHAR2)
+
+RETURN VARCHAR2 AS
+   v_ReturnCode   VARCHAR2(10);
+
+BEGIN
+   
+   -- determine the country's name from the code:
+   SELECT Code 
+     INTO v_ReturnCode
+     FROM BCA_AO.AO_U_Province_State 
+    WHERE Description = pv_Province;
+    
+   -- return the country name
+   RETURN(v_ReturnCode);
+
+EXCEPTION
+   WHEN OTHERS THEN 
+      RETURN v_ReturnCode;
+     
+END;

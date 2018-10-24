@@ -1,0 +1,208 @@
+CREATE OR REPLACE FUNCTION BCA_APPL.Format_Roll_Owner_Addr
+--********************************************************************************
+--* Application:   Roll Data
+--*
+--* Function:      Format_Roll_Owner_Addr
+--*
+--* Purpose:       Takes the City, Country, FreeForm_Address, Post_Direction,
+--*                Pre_Direction, Postal_Zip, Province_State, Street_Name,
+--*                Street_Number, Street_Type, Unit_Number, pv_Line_Length, Line_Number
+--*                and Delivery_Method as input.and returns a formatted address.
+--*
+--* Maintenance Log:
+--*
+--* Ver.Rel     Date     Developer/Description
+--* -------  ----------  ---------------------------------------------------------
+--* 1.0      2005/05/25  NDP  Initial Version
+--*********************************************************************************
+(pv_Freeform_Address   BCA_AO.RB000_NAMES.Freeform_Address%TYPE,
+pv_Unit_Number         BCA_AO.RB000_NAMES.Unit_Number%TYPE,
+pv_Street_Number       BCA_AO.RB000_NAMES.Street_Number%TYPE,
+pv_Pre_Directional     BCA_AO.RB000_NAMES.Pre_Directional%TYPE,
+pv_Street_Name         BCA_AO.RB000_NAMES.Street_Name%TYPE,
+pv_Street_Type         BCA_AO.RB000_NAMES.Street_Type%TYPE,
+pv_Post_Directional    BCA_AO.RB000_NAMES.Post_Directional%TYPE,
+pv_City                BCA_AO.RB000_NAMES.City%TYPE,
+pv_Province_State      BCA_AO.RB000_NAMES.Province_State%TYPE,
+pv_Postal_Zip          BCA_AO.RB000_NAMES.Postal_Zip%TYPE,
+pv_Country             BCA_AO.RB000_NAMES.Country%TYPE,
+pv_Line_Length INTEGER := 0,
+pv_Line_Number INTEGER := 0)
+
+RETURN VARCHAR2 AS
+   v_FreeForm_Addr   VARCHAR2(256);
+   v_Unit_No         VARCHAR2(8);
+   v_Strt_No         VARCHAR2(8);
+   v_Strt_Name       VARCHAR2(30);
+   v_Post_Dir        VARCHAR2(10);
+   v_Pre_Dir         VARCHAR2(10);
+   v_Strt_Type       VARCHAR2(10);
+   v_City            VARCHAR2(50);
+   v_Province        VARCHAR2(10);
+   v_Country         VARCHAR2(10);
+   v_Post_Zip        VARCHAR2(11);
+   v_FreeForm_1      VARCHAR2(256);
+   v_FreeForm_2      VARCHAR2(256);
+   v_Address         VARCHAR2(256);
+   v_City_Prov       VARCHAR2(256);
+   v_Int_Country     VARCHAR2(256);
+   v_ReturnLine      VARCHAR2(256);
+   v_Line_Len        INTEGER := '0';
+   v_Line_No         INTEGER := '0';
+   v_Linefeed        INTEGER := '0';
+   v_LastStr         INTEGER := '0';
+   v_EndStr          INTEGER := '0';
+
+BEGIN
+
+   v_Line_Len := pv_Line_Length;
+   IF pv_Freeform_Address IS NOT NULL THEN
+      v_FreeForm_Addr := CondStr(pv_Freeform_Address);
+      v_Linefeed := INSTR(v_FreeForm_Addr, chr(10), 1, 1);
+      IF v_Linefeed > 0 THEN
+         IF v_Linefeed > v_Line_Len THEN
+            v_FreeForm_1 := SUBSTR(v_FreeForm_Addr, 1, v_Line_Len);
+            v_LastStr := v_Linefeed + 2;
+         ELSE
+            v_FreeForm_1 := SUBSTR(v_FreeForm_Addr, 1, (v_Linefeed - 2));
+            v_LastStr := v_Linefeed + 2;
+         END IF;
+         v_Linefeed := INSTR(v_FreeForm_Addr, chr(10), v_Linefeed, 1);
+         v_EndStr := INSTR(v_FreeForm_Addr, chr(10), v_Linefeed, 2);
+         IF v_Linefeed > 0 THEN
+            IF v_Linefeed > v_Line_Len THEN
+               v_FreeForm_2 := SUBSTR(v_FreeForm_Addr, v_LastStr, v_Line_Len);
+            ELSE
+               v_FreeForm_2 := SUBSTR(v_FreeForm_Addr, v_LastStr, (v_EndStr - v_LastStr - 1));
+            END IF;
+         END IF;
+      ELSE
+         v_FreeForm_1 := SUBSTR(v_FreeForm_Addr, 1, v_Line_Len);
+      END IF;
+   END IF;
+
+   --Remove leading and trailing spaces.
+   IF pv_Unit_Number IS NOT NULL THEN
+      v_Unit_No := CondStr(pv_Unit_Number);
+      v_Address := v_Unit_No || ' - ';
+   END IF;
+
+   --Remove leading and trailing spaces.
+   IF pv_Street_Number IS NOT NULL THEN
+      v_Strt_No := CondStr(pv_Street_Number);
+      v_Address := v_Address || v_Strt_No || ' ';
+   END IF;
+
+   --Remove leading and trailing spaces.
+   IF pv_Pre_Directional IS NOT NULL THEN
+      v_Pre_Dir := CondStr(pv_Pre_Directional);
+      v_Address := v_Address || v_Pre_Dir || ' ';
+   END IF;
+
+   --Remove leading and trailing spaces.
+   IF pv_Street_Name IS NOT NULL THEN
+      v_Strt_Name := CondStr(pv_Street_Name);
+      v_Address := v_Address || v_Strt_Name || ' ';
+   END IF;
+
+   --Remove leading and trailing spaces.
+   IF pv_Street_Type IS NOT NULL THEN
+      v_Strt_Type := CondStr(pv_Street_Type);
+      v_Address := v_Address || v_Strt_Type;
+   END IF;
+
+   --Remove leading and trailing spaces.
+   IF pv_Post_Directional IS NOT NULL THEN
+      v_Post_Dir  := CondStr(pv_Post_Directional);
+      v_Address := ' ' || v_Address || ' ' || v_Post_Dir;
+   END IF;
+
+   --Remove leading and trailing spaces.
+   IF pv_City IS NOT NULL THEN
+      v_City := CondStr(pv_City);
+      v_City_Prov := v_City || ' ';
+   END IF;
+
+   --Remove leading and trailing spaces.
+   IF pv_Province_State IS NOT NULL THEN
+      v_Province := CondStr(pv_Province_State);
+      IF LENGTH(v_Province) > 2 Then
+         v_City_Prov := v_City_Prov || Get_Abrv_Prov_State(v_Province);
+      ELSE
+         v_City_Prov := v_City_Prov || v_Province;
+      END IF;
+   END IF;
+
+   --Remove leading and trailing spaces.
+   IF pv_Country IS NOT NULL THEN
+      v_Country := pv_Country;
+      IF v_Country = '37' OR v_Country = '226' THEN
+         --Remove leading and trailing spaces.
+         IF pv_Postal_Zip IS NOT NULL THEN
+            v_Post_Zip := CondStr(pv_Postal_Zip);
+            v_City_Prov := v_City_Prov || '  ' || v_Post_Zip;
+         END IF;
+      END IF;
+      IF v_Country <> '37' THEN
+         IF v_Country = '226' THEN
+            v_Int_Country := 'USA';
+         ELSE
+            v_Int_Country := Get_Country(v_Country);
+         END IF;
+      END IF;
+   END IF;
+
+   v_ReturnLine := '';
+   IF pv_Line_Number = 1 THEN
+      IF v_FreeForm_1 IS NOT NULL THEN
+         v_ReturnLine := v_FreeForm_1;
+      ELSE
+         v_ReturnLine := v_Address;
+      END IF;
+   ELSIF pv_Line_Number = 2 THEN
+      IF v_FreeForm_1 IS NOT NULL THEN
+         IF v_FreeForm_2 IS NOT NULL THEN
+            v_ReturnLine := v_FreeForm_2;
+         ELSE
+            v_ReturnLine := v_Address;
+         END IF;
+      ELSE
+         v_ReturnLine := v_City_Prov;
+      END IF;
+   ELSIF pv_Line_Number = 3 THEN
+      IF v_FreeForm_1 IS NOT NULL THEN
+         IF v_FreeForm_2 IS NOT NULL THEN
+            v_ReturnLine := v_Address;
+         ELSE
+            v_ReturnLine := v_City_Prov;
+         END IF;
+      ELSE
+         v_ReturnLine := v_Int_Country;
+      END IF;
+   ELSIF pv_Line_Number = 4 THEN
+      IF v_FreeForm_1 IS NOT NULL THEN
+         IF v_FreeForm_2 IS NOT NULL THEN
+            v_ReturnLine := v_City_Prov;
+         ELSE
+            v_ReturnLine := v_Int_Country;
+         END IF;
+      END IF;
+   ELSIF pv_Line_Number = 5 THEN
+      IF v_FreeForm_1 IS NOT NULL THEN
+         IF v_FreeForm_2 IS NOT NULL THEN
+            v_ReturnLine := v_Int_Country;
+         END IF;
+      END IF;
+   END IF;
+
+   RETURN(v_ReturnLine);
+
+   EXCEPTION
+      WHEN NO_DATA_FOUND THEN
+         NULL;
+      WHEN OTHERS THEN
+         -- Consider logging the error and then re-raise
+         RAISE;
+
+END;
+/

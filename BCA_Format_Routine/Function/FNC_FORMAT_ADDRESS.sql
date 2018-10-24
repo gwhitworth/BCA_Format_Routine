@@ -118,7 +118,7 @@ BEGIN
 
 	SET @addr5 =	trim(@addr5 + dbo.FNC_APPEND_DATA(dbo.FNC_SET_COUNTRY(@p_country), ' '));
 
-  --combine all the address lines order into one line with carry return and line feed between them
+	--combine all the address lines order into one line with carry return and line feed between them
 	IF @p_freeform_address IS NOT NULL
 	BEGIN
 		-- check for 1st carriage return within the freeform address
@@ -150,71 +150,70 @@ BEGIN
 				END --WHILE
 			END --ELSE
 		END  --IF
-	END --IF
-	ELSE   -- carriage return embedded within the string
-	BEGIN
-		WHILE @i <= 5
+		ELSE
 		BEGIN
-			IF @CRLFExist > 0
+			WHILE @i <= 5
 			BEGIN
-				IF @CRLFExist > @p_line_length + 1
+				IF @CRLFExist > 0
 				BEGIN
-					SET @tmpFreeF = dbo.GET_FORMAT_LINE(@tmpStr, @p_line_length, 1)
-					INSERT INTO @Freeform_Table (AddressLine) VALUES(@tmpFreeF)
-					--INSERT INTO @Freeform_Table (AddressLine) VALUES('JUNK')
-					SET @tmpStr = SUBSTRING(@tmpStr, LEN(@tmpFreeF)+1,LEN(@tmpStr))
-					SET @tmpStr = dbo.clean_crlf(@tmpStr)
-					SET @CRLFExist = CHARINDEX(@tmpStr, CHAR(13) + CHAR(10))
+					IF @CRLFExist > @p_line_length + 1
+					BEGIN
+						SET @tmpFreeF = dbo.GET_FORMAT_LINE(@tmpStr, @p_line_length, 1)
+						INSERT INTO @Freeform_Table (AddressLine) VALUES(@tmpFreeF)
+						--INSERT INTO @Freeform_Table (AddressLine) VALUES('JUNK')
+						SET @tmpStr = SUBSTRING(@tmpStr, LEN(@tmpFreeF)+1,LEN(@tmpStr))
+						SET @tmpStr = dbo.clean_crlf(@tmpStr)
+						SET @CRLFExist = CHARINDEX(@tmpStr, CHAR(13) + CHAR(10))
+					END --IF
+					ELSE
+					BEGIN
+						INSERT INTO @Freeform_Table (AddressLine) VALUES(SUBSTRING(@tmpStr, 1, @CRLFExist-1))
+						--INSERT INTO @Freeform_Table (AddressLine) VALUES('JUNK2')
+						SET @tmpStr		= SUBSTRING(@tmpStr, @CRLFExist+2, LEN(@tmpStr))
+						SET @CRLFExist	= CHARINDEX(@tmpStr, CHAR(13) + CHAR(10))
+					END --ELSE
 				END --IF
-				ELSE
-				BEGIN
-					INSERT INTO @Freeform_Table (AddressLine) VALUES(SUBSTRING(@tmpStr, 1, @CRLFExist-1))
-					--INSERT INTO @Freeform_Table (AddressLine) VALUES('JUNK2')
-					SET @tmpStr		= SUBSTRING(@tmpStr, @CRLFExist+2, LEN(@tmpStr))
-					SET @CRLFExist	= CHARINDEX(@tmpStr, CHAR(13) + CHAR(10))
-				END --ELSE
-			END --IF
-			SET @i = @i + 1
+				SET @i = @i + 1
+			END --WHILE
+		END -- 1st carriage return
+		SELECT @RowsToProcess = COUNT(*) FROM @Freeform_Table
+		SET @CurrentRow = 0
+		WHILE @CurrentRow < @RowsToProcess
+		BEGIN
+			SET @CurrentRow = @CurrentRow + 1
+			SELECT 
+				@SelectCol1 = AddressLine
+				FROM @Freeform_Table
+				WHERE RowID = @CurrentRow
+			IF ((@SelectCol1 <> '') OR LEN(@SelectCol1) > 0)
+				SET @address = dbo.FNC_APPEND_CRLF(@address, @SelectCol1);
 		END --WHILE
-	END -- ELSE **1st carriage return
 
-	SELECT @RowsToProcess = COUNT(*) FROM @Freeform_Table
-	SET @CurrentRow = 0
-	WHILE @CurrentRow < @RowsToProcess
-	BEGIN
-		SET @CurrentRow = @CurrentRow + 1
-		SELECT 
-			@SelectCol1 = AddressLine
-			FROM @Freeform_Table
-			WHERE RowID = @CurrentRow
-		IF ((@SelectCol1 <> '') OR LEN(@SelectCol1) > 0)
-			SET @address = dbo.FNC_APPEND_CRLF(@address, @SelectCol1);
-	END --WHILE
+		SET @address = dbo.FNC_APPEND_CRLF(@address, @addr1)
+		SET @address = dbo.FNC_APPEND_CRLF(@address, @addr2)
+		SET @address = dbo.FNC_APPEND_CRLF(@address, @addr3)
+		--in case the end of freeform address having crlf (i.e. double up in the address line), so clean out the duplicated crlf
+		SET @address = dbo.CLEAN_CRLF(@address)
 
-	SET @address = dbo.FNC_APPEND_CRLF(@address, @addr1)
-	SET @address = dbo.FNC_APPEND_CRLF(@address, @addr2)
-	SET @address = dbo.FNC_APPEND_CRLF(@address, @addr3)
-	--in case the end of freeform address having crlf (i.e. double up in the address line), so clean out the duplicated crlf
-	SET @address = dbo.CLEAN_CRLF(@address)
+		IF (@addr4 IS NOT NULL AND @P_CITY IS NULL AND @P_PROVINCE_STATE IS NULL AND @P_POSTAL_ZIP IS NOT NULL)
+			SET @address = @address + '     ' + @addr4
+		ELSE IF @addr4 IS NOT NULL
+			SET @address = dbo.FNC_APPEND_CRLF(@address, @addr4)
+		ELSE
+			SET @address = TRIM(@address);
 
-	IF (@addr4 IS NOT NULL AND @P_CITY IS NULL AND @P_PROVINCE_STATE IS NULL AND @P_POSTAL_ZIP IS NOT NULL)
-		SET @address = @address + '     ' + @addr4
-	ELSE IF @addr4 IS NOT NULL
-		SET @address = dbo.FNC_APPEND_CRLF(@address, @addr4)
-	ELSE
-		SET @address = TRIM(@address);
+		SET @address = dbo.FNC_APPEND_CRLF(@address, @addr5)
 
-	SET @address = dbo.FNC_APPEND_CRLF(@address, @addr5)
+		--overflow will be displayed at the end of freeform
+		SET @address = dbo.FNC_APPEND_CRLF(@address, @overflow)
 
-	--overflow will be displayed at the end of freeform
-	SET @address = dbo.FNC_APPEND_CRLF(@address, @overflow)
+		--in case if crlf at the start of address line
+		IF SUBSTRING(@address, 1, 1) = CHAR(13) OR SUBSTRING(@address, 1, 1) = CHAR(10)
+			SET @address = SUBSTRING(@address, 2, LEN(@address));
 
-	--in case if crlf at the start of address line
-	IF SUBSTRING(@address, 1, 1) = CHAR(13) OR SUBSTRING(@address, 1, 1) = CHAR(10)
-		SET @address = SUBSTRING(@address, 2, LEN(@address));
-
-	IF SUBSTRING(@address, 1, 1) = CHAR(10) OR SUBSTRING(@address, 1, 1) = CHAR(13)
-		SET @address = SUBSTRING(@address, 2, LEN(@address));
+		IF SUBSTRING(@address, 1, 1) = CHAR(10) OR SUBSTRING(@address, 1, 1) = CHAR(13)
+			SET @address = SUBSTRING(@address, 2, LEN(@address));
+	END 
     ELSE--fixed from addr
 	BEGIN
 		SET @address = dbo.FNC_APPEND_CRLF(@address, @overflow);
