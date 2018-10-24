@@ -87,8 +87,6 @@
     <None Include="Oracle Source\Get_Country.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Testing Data\NameAddressData.csv" />
-    <None Include="Testing Data\NameAddressData.xlsx" />
     <None Include="Oracle Source\PKG_FORMAT_OWNER_ADDRESS" />
     <None Include="Testing Data\CountryData.csv" />
     <None Include="Testing Data\ProvData.csv" />
