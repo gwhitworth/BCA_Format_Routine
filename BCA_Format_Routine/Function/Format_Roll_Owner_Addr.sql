@@ -62,18 +62,18 @@ BEGIN
 	IF @p_Freeform_Address IS NOT NULL
 	BEGIN
 		SET @FreeForm_Addr = dbo.dbo.CondStr(@p_Freeform_Address)
-		SET @Linefeed = CHARINDEX(@FreeForm_Addr, CHAR(10), 1)
+		SET @Linefeed = CHARINDEX(CHAR(10), @FreeForm_Addr)
 		IF @Linefeed > 0
 		BEGIN
 			IF @Linefeed > @Line_Len
 			BEGIN
-				SET @FreeForm_1 = CHARINDEX(@FreeForm_Addr, 1, @Line_Len)
+				SET @FreeForm_1 = SUBSTRING(@FreeForm_Addr, 1, @Line_Len)
 				SET @LastStr = @Linefeed + 2
 			END
 		END
 		ELSE
 		BEGIN
-			SET @FreeForm_1 = CHARINDEX(@FreeForm_Addr, 1, (@Linefeed - 2))
+			SET @FreeForm_1 = SUBSTRING(@FreeForm_Addr, 1, (@Linefeed - 2))
 			SET @LastStr = @Linefeed + 2
 		END
          
@@ -82,13 +82,13 @@ BEGIN
 		IF @Linefeed > 0
 		BEGIN
 			IF @Linefeed > @Line_Len
-				SET @FreeForm_2 = CHARINDEX(@FreeForm_Addr, @LastStr, @Line_Len)
+				SET @FreeForm_2 = SUBSTRING(@FreeForm_Addr, @LastStr, @Line_Len)
 			ELSE
-				SET @FreeForm_2 = CHARINDEX(@FreeForm_Addr, @LastStr, (@EndStr - @LastStr - 1))
+				SET @FreeForm_2 = SUBSTRING(@FreeForm_Addr, @LastStr, (@EndStr - @LastStr - 1))
 		END
 	END
 	ELSE
-		SET @FreeForm_1 = CHARINDEX(@FreeForm_Addr, 1, @Line_Len)
+		SET @FreeForm_1 = SUBSTRING(@FreeForm_Addr, 1, @Line_Len)
 
 	--Remove leading and trailing spaces.
 	IF @p_Unit_Number IS NOT NULL

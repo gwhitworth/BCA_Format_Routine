@@ -16,6 +16,9 @@ Version......Date...........Purpose.............Developer
 1.0..........Nov 2018...... original build      Gerry Whitworth
 *********************************************************************************************************************/
 CREATE OR ALTER PROCEDURE dbo.SP_TEST_FORMAT_ONE_ADDRESS
+(
+	@p_line_number INT = 0
+)
 AS
 BEGIN	
 	DECLARE	@City				varchar(50),
@@ -79,8 +82,8 @@ BEGIN
 										@Address_Mod_Value,
 										'',
 										'',
-										2000,
-										2
+										50,
+										@p_line_number
 									)
 	IF @@ERROR <> 0
 	BEGIN

@@ -31,24 +31,24 @@ BEGIN
 	BEGIN
 		--Remove duplicate CRLF
 		SET @rtnStr = @p_Str;
-		SET @CRLFExist = CHARINDEX(@rtnStr, CHAR(13) + CHAR(10) + CHAR(13) + CHAR(10));
+		SET @CRLFExist = CHARINDEX(CHAR(13) + CHAR(10) + CHAR(13) + CHAR(10),@rtnStr);
 
 		--Loop through and remove multiple CRLF.
 		WHILE 1 = 1
 		BEGIN
 			SET @rtnStr = REPLACE(@rtnStr, CHAR(13) + CHAR(10) + CHAR(13) + CHAR(10), CHAR(13) + CHAR(10))
-			SET @CRLFExist = CHARINDEX(@rtnStr, CHAR(13) + CHAR(10) + CHAR(13) + CHAR(10))
+			SET @CRLFExist = CHARINDEX(CHAR(13) + CHAR(10) + CHAR(13) + CHAR(10),@rtnStr)
 			IF @CRLFExist = 0
 				BREAK;
 		END --WHILE
 		--Loop through and remove leading CRLF.
-		SET @CRLFExist = CHARINDEX(@rtnStr, CHAR(13) + CHAR(10))
+		SET @CRLFExist = CHARINDEX(CHAR(13) + CHAR(10), @rtnStr)
 		IF @CRLFExist = 1
 		BEGIN
 			WHILE 1 = 1
 			BEGIN
 				SET @rtnStr = SUBSTRING(@rtnStr, 3,LEN(@rtnStr));
-				SET @CRLFExist = CHARINDEX(@rtnStr, CHAR(13) + CHAR(10))
+				SET @CRLFExist = CHARINDEX(CHAR(13) + CHAR(10), @rtnStr)
 				IF @CRLFExist = 0 OR @CRLFExist > 1  OR @CRLFExist IS NULL
 					BREAK;
 			END

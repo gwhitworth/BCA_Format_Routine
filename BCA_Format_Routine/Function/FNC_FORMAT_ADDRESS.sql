@@ -60,21 +60,21 @@ BEGIN
 
 	DECLARE @rtnValue	varchar(max) = '',
 			@address	varchar(500) = '',
-			@addr1		varchar(255) = '',
-			@addr2		varchar(255) = '',
-			@addr3		varchar(255) = '',
-			@addr4		varchar(255) = '',
-			@addr5		varchar(255) = '',
-			@overflow	varchar(255) = '',
-			@tmpStr		varchar(500) = '',
-			@tmpFreeF	varchar(255) = '',
+			@addr1		varchar(255),
+			@addr2		varchar(255),
+			@addr3		varchar(255),
+			@addr4		varchar(255),
+			@addr5		varchar(255),
+			@overflow	varchar(255),
+			@tmpStr		varchar(500),
+			@tmpFreeF	varchar(255),
 			@CRLFExist  int = 0,
 			@i			int = 0;
 
 	SET @address = dbo.FNC_PREPEND_DATA(@p_Address_CO, 'C/O ')
 	SET @address = dbo.FNC_APPEND_CRLF(@address, (dbo.FNC_PREPEND_DATA(@p_Address_Attention, 'ATTN ')))
 
-	SET @addr1 = trim(@addr1 + dbo.FNC_APPEND_DATA(@p_Street_Number, ' ') +
+	SET @addr1 = TRIM(ISNULL(@addr1,'') + dbo.FNC_APPEND_DATA(@p_Street_Number, ' ') +
 					--dbo.FNC_APPEND_DATA(@p_Pre_Directional, ' ') +
 					dbo.FNC_APPEND_DATA(@p_Street_Name, ' ') +
 					dbo.FNC_APPEND_DATA(@p_street_type, ' ') +
@@ -85,7 +85,7 @@ BEGIN
 	IF (@p_country <> '226')  
 	BEGIN
 		--if unit number won't fit on street address line
-		IF ((LEN(@p_unit_number) + 1 + LEN(@Addr1)) > @p_line_length)
+		IF ((LEN(@p_unit_number) + 1 + LEN(@addr1)) > @p_line_length)
 			SET @overflow = dbo.FNC_PREPEND_DATA(@p_unit_number, 'UNIT ');
 		ELSE  --fix, append the unit # at the start of address line
 			SET @addr1 = dbo.FNC_APPEND_DATA(@p_unit_number, '-') + @addr1;
@@ -100,30 +100,30 @@ BEGIN
 
 	--check floor for overflow
 	IF ((LEN(@addr1) + 4 + LEN(@p_address_floor)) > @p_line_length)
-		SET @overflow = trim(@overflow +  ' ' + dbo.FNC_APPEND_DATA((dbo.FNC_PREPEND_DATA(@p_address_floor, 'FLR ')), ' '));
+		SET @overflow = TRIM(@overflow +  ' ' + dbo.FNC_APPEND_DATA((dbo.FNC_PREPEND_DATA(@p_address_floor, 'FLR ')), ' '));
 	ELSE
-		SET @addr1 = trim(@addr1 + ' ' + dbo.FNC_APPEND_DATA((dbo.FNC_PREPEND_DATA(@p_address_floor, 'FLR ')), ' '));
+		SET @addr1 = TRIM(@addr1 + ' ' + dbo.FNC_APPEND_DATA((dbo.FNC_PREPEND_DATA(@p_address_floor, 'FLR ')), ' '));
 
-	SET @addr2 =	trim(@addr2 + dbo.FNC_APPEND_DATA((dbo.FNC_PREPEND_DATA(@p_address_site, 'SITE ')), ' ')
+	SET @addr2 =	TRIM(ISNULL(@addr2,'') + dbo.FNC_APPEND_DATA((dbo.FNC_PREPEND_DATA(@p_address_site, 'SITE ')), ' ')
 					+ dbo.FNC_APPEND_DATA((dbo.FNC_PREPEND_DATA(@p_address_comp, 'COMP ')), ' '));
 
-	SET @addr3 =	trim(@addr3 + dbo.FNC_APPEND_DATA(@p_address_mod, ' ')
+	SET @addr3 =	TRIM(ISNULL(@addr3,'') + dbo.FNC_APPEND_DATA(@p_address_mod, ' ')
 						+ dbo.FNC_APPEND_DATA(@p_address_mod_value, ' ')
 						+ dbo.FNC_APPEND_DATA(@p_address_dim, ' ')
 						+ dbo.FNC_APPEND_DATA(@p_address_dim_value, ' '));
 
-	SET @addr4 =	trim(@addr4 + dbo.FNC_APPEND_DATA(@p_city, ' ')
+	SET @addr4 =	TRIM(ISNULL(@addr4,'') + dbo.FNC_APPEND_DATA(@p_city, ' ')
 						+ dbo.FNC_APPEND_DATA(dbo.FNC_SET_PROVINCE(@p_province_state), '     ')
 						+ dbo.FNC_APPEND_DATA(@p_postal_zip, ' '));
 
-	SET @addr5 =	trim(@addr5 + dbo.FNC_APPEND_DATA(dbo.FNC_SET_COUNTRY(@p_country), ' '));
+	SET @addr5 =	TRIM(ISNULL(@addr5,'') + dbo.FNC_APPEND_DATA(dbo.FNC_SET_COUNTRY(@p_country), ' '));
 
 	--combine all the address lines order into one line with carry return and line feed between them
 	IF @p_freeform_address IS NOT NULL
 	BEGIN
 		-- check for 1st carriage return within the freeform address
 		SET @tmpStr = dbo.CLEAN_CRLF(@p_freeform_address);
-		SET @CRLFExist = CHARINDEX(@tmpStr, CHAR(13) + CHAR(10));
+		SET @CRLFExist = CHARINDEX(CHAR(13) + CHAR(10), @tmpStr);
 
 		-- No carriage return found in the string
 		IF @CRLFExist = 0
@@ -163,14 +163,14 @@ BEGIN
 						--INSERT INTO @Freeform_Table (AddressLine) VALUES('JUNK')
 						SET @tmpStr = SUBSTRING(@tmpStr, LEN(@tmpFreeF)+1,LEN(@tmpStr))
 						SET @tmpStr = dbo.clean_crlf(@tmpStr)
-						SET @CRLFExist = CHARINDEX(@tmpStr, CHAR(13) + CHAR(10))
+						SET @CRLFExist = CHARINDEX(CHAR(13) + CHAR(10), @tmpStr);
 					END --IF
 					ELSE
 					BEGIN
 						INSERT INTO @Freeform_Table (AddressLine) VALUES(SUBSTRING(@tmpStr, 1, @CRLFExist-1))
 						--INSERT INTO @Freeform_Table (AddressLine) VALUES('JUNK2')
 						SET @tmpStr		= SUBSTRING(@tmpStr, @CRLFExist+2, LEN(@tmpStr))
-						SET @CRLFExist	= CHARINDEX(@tmpStr, CHAR(13) + CHAR(10))
+						SET @CRLFExist	= CHARINDEX(CHAR(13) + CHAR(10), @tmpStr);
 					END --ELSE
 				END --IF
 				SET @i = @i + 1
@@ -222,6 +222,7 @@ BEGIN
 		SET @address = dbo.FNC_APPEND_CRLF(@address, @addr3);
 		SET @address = dbo.FNC_APPEND_CRLF(@address, @addr4);
 		SET @address = dbo.FNC_APPEND_CRLF(@address, @addr5);
+		SET @address = dbo.CLEAN_CRLF(@address)
 	END --ELSE
 
 	--if pv_line_number is null or 0 return the whole address within length

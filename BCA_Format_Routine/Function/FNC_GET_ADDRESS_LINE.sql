@@ -30,9 +30,9 @@ BEGIN
 			@start		INT,
 			@end		INT
 
-	SET @end = CHARINDEX(@p_Address, CHAR(13));
+	SET @end = CHARINDEX(CHAR(10), @p_Address)
 	IF @p_line_number > 1
-		SET @start = CHARINDEX(@p_Address, CHAR(10)) + 1;
+		SET @start = CHARINDEX(CHAR(13), @p_Address) + 1
 	ELSE--pv_line number = 1
 		SET @start = 1
 	

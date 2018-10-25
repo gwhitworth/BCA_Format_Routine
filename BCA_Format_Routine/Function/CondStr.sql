@@ -30,13 +30,13 @@ BEGIN
 	BEGIN
       --Remove leading, trailing and multipule spaces.
       SET @rtnStr = @p_Str
-      SET @SpacesExist = CHARINDEX(@rtnStr, '  ');
+      SET @SpacesExist = CHARINDEX('  ', @rtnStr);
 
       --Loop through and remove multipule spaces.
       WHILE 1 = 1
 	  BEGIN
          SET @rtnStr = REPLACE(@rtnStr, '  ', ' ')
-         SET @SpacesExist = CHARINDEX(@rtnStr, '  ')
+         SET @SpacesExist = CHARINDEX('  ', @rtnStr)
 		 IF @SpacesExist = 0
 			BREAK;
 	  END
