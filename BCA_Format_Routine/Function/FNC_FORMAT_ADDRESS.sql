@@ -95,14 +95,14 @@ BEGIN
         IF ((LEN(@addr1) + 3 + LEN(@p_unit_number)) > @p_line_length)
 			SET @overflow = dbo.FNC_PREPEND_DATA(@p_unit_number, '#');
 	    ELSE
-			SET @addr1 = @addr1 + dbo.FNC_PREPEND_DATA(@p_unit_number, ' #');
+			SET @addr1 = ISNULL(@addr1,'') + dbo.FNC_PREPEND_DATA(@p_unit_number, ' #');
 	END
 
 	--check floor for overflow
 	IF ((LEN(@addr1) + 4 + LEN(@p_address_floor)) > @p_line_length)
 		SET @overflow = TRIM(@overflow +  ' ' + dbo.FNC_APPEND_DATA((dbo.FNC_PREPEND_DATA(@p_address_floor, 'FLR ')), ' '));
 	ELSE
-		SET @addr1 = TRIM(@addr1 + ' ' + dbo.FNC_APPEND_DATA((dbo.FNC_PREPEND_DATA(@p_address_floor, 'FLR ')), ' '));
+		SET @addr1 = TRIM(ISNULL(@addr1,'') + ' ' + dbo.FNC_APPEND_DATA((dbo.FNC_PREPEND_DATA(@p_address_floor, 'FLR ')), ' '));
 
 	SET @addr2 =	TRIM(ISNULL(@addr2,'') + dbo.FNC_APPEND_DATA((dbo.FNC_PREPEND_DATA(@p_address_site, 'SITE ')), ' ')
 					+ dbo.FNC_APPEND_DATA((dbo.FNC_PREPEND_DATA(@p_address_comp, 'COMP ')), ' '));

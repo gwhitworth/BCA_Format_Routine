@@ -11,6 +11,6 @@ GO
 --SET @Type = 'CO_ATTN'
 SET @Type = 'USA'
 
-SET @RequestedLineNum = 2;
+SET @RequestedLineNum = 4;
 
 EXEC dbo.SP_TEST_FORMAT_ONE_ADDRESS @Type, @RequestedLineNum

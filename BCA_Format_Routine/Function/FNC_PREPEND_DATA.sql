@@ -30,10 +30,10 @@ BEGIN
 	IF @p_temp IS NOT NULL
 		SET @rtnVal = @p_prefix + upper(trim(dbo.CondStr(@p_temp)))
 	ELSE
-		SET @rtnVal = NULL
+		SET @rtnVal = ''
 
 	IF @@ERROR <> 0
-		RETURN (NULL);
+		RETURN NULL
 
 	RETURN @rtnVal
 END;
