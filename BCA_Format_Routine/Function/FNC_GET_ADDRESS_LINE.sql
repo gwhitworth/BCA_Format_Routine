@@ -30,11 +30,14 @@ BEGIN
 			@start		INT,
 			@end		INT
 
-	SET @end = CHARINDEX(CHAR(10), @p_Address)
+	SET @end = dbo.INSTR(@p_Address, CHAR(10), 0, @p_line_number)
 	IF @p_line_number > 1
-		SET @start = CHARINDEX(CHAR(13), @p_Address) + 1
+	BEGIN
+		SET @start = dbo.INSTR(@p_Address, CHAR(13), 0, @p_line_number-1)
+	END
 	ELSE--pv_line number = 1
 		SET @start = 1
+
 	
 	IF @end > 0
 		SET @end = @end - @start

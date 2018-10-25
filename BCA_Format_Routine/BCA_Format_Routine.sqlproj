@@ -110,4 +110,7 @@
   <ItemGroup>
     <None Include="Function\Get_Country.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Function\INSTR.sql" />
+  </ItemGroup>
 </Project>
