@@ -1,4 +1,6 @@
-﻿/*********************************************************************************************************************
+﻿DROP PROCEDURE IF EXISTS dbo.SP_TEST_FORMAT_ONE_ADDRESS
+GO
+/*********************************************************************************************************************
 Procedure: dbo.SP_TEST_FORMAT_ONE_ADDRESS
 
 Purpose: This proc is used for testing and debugging one format address call
@@ -158,32 +160,53 @@ BEGIN
 				@Address_Comp = Compartment,
 				@Address_Mod = Delivery_Mode_Desc,
 				@Address_Mod_Value = Delivery_mode_Value
-		FROM [dbo].[NameAddress]
-		WHERE [Country_Code] = '226'
+		FROM [dbo].[USA_NameAddress]
+	END
+	ELSE IF @p_Type = 'FOREIGH'
+	BEGIN
+		SELECT TOP 1
+				@City = dimCity_BK,
+				@Country = dimCountry_BK,
+				@Freeform_Address = NULL,
+				@Directional = dimStreetDirection_BK,
+				@Postal_zip = Postal_Zip_Code,
+				@Province_State = dimProvince_BK,
+				@Street_Name = Address_Street_Name,
+				@Street_Number = Street_Number,
+				@Street_Type = dimStreetType_BK,
+				@Unit_Number = Address_Unit,
+				@Address_Floor = Floor_Number,
+				@Address_CO = Care_Of,
+				@Address_Attention = Attention,
+				@Address_Site = [Site],
+				@Address_Comp = Compartment,
+				@Address_Mod = Delivery_Mode_Desc,
+				@Address_Mod_Value = Delivery_mode_Value
+		FROM [dbo].[ForeighNameAddress]
 	END
 
-		SELECT [dbo].[FNC_FORMAT_ADDRESS](	@City,
-											@Country,
-											@Freeform_Address,
-											@Directional,
-											@Postal_zip,
-											@Province_State,
-											@Street_Name,
-											@Street_Number,
-											@Street_Type,
-											@Unit_Number,
-											@Address_Floor,
-											@Address_CO	,
-											@Address_Attention,
-											@Address_Site,
-											@Address_Comp,
-											@Address_Mod,
-											@Address_Mod_Value,
-											'',
-											'',
-											50,
-											@p_line_number
-										)
+	SELECT [dbo].[FNC_FORMAT_ADDRESS](	@City,
+										@Country,
+										@Freeform_Address,
+										@Directional,
+										@Postal_zip,
+										@Province_State,
+										@Street_Name,
+										@Street_Number,
+										@Street_Type,
+										@Unit_Number,
+										@Address_Floor,
+										@Address_CO	,
+										@Address_Attention,
+										@Address_Site,
+										@Address_Comp,
+										@Address_Mod,
+										@Address_Mod_Value,
+										'',
+										'',
+										50,
+										@p_line_number
+									)
 	IF @@ERROR <> 0
 	BEGIN
 		EXEC [dbo].[SP_LOG_ERROR](SELECT ERROR_MESSAGE(),ERROR_STATE(), ERROR_SEVERITY())

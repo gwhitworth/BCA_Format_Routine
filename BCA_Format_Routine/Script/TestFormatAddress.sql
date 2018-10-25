@@ -10,7 +10,8 @@ GO
 --SET @Type = 'ATTN'
 --SET @Type = 'CO_ATTN'
 SET @Type = 'USA'
+--SET @Type = 'FOREIGH'
 
-SET @RequestedLineNum = 4;
+SET @RequestedLineNum = 3;
 
 EXEC dbo.SP_TEST_FORMAT_ONE_ADDRESS @Type, @RequestedLineNum

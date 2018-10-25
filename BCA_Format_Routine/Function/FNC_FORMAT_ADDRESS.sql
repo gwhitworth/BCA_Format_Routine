@@ -236,5 +236,5 @@ BEGIN
 		RETURN NULL
 	END
 
-	RETURN @rtnValue
+	RETURN dbo.CLEAN_CRLF(@rtnValue)
 END
