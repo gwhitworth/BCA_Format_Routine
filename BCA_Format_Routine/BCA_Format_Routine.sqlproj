@@ -81,7 +81,7 @@
     <None Include="Function\CLEAN_CRLF.sql" />
     <None Include="Function\FNC_GET_ADDRESS_LINE.sql" />
     <None Include="Function\FNC_CHECK_LEN.sql" />
-    <None Include="Script\TestFormatAddress.sql" />
+    <None Include="Script\TestOneFormatAddress.sql" />
     <None Include="Oracle Source\FORMAT_ROLL_OWNER_ADDR.txt" />
     <None Include="Oracle Source\Get_Abrv_Prov_State.txt" />
     <None Include="Oracle Source\Get_Country.txt" />
@@ -112,5 +112,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Function\INSTR.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Script\TestAllFormatAddress.sql" />
   </ItemGroup>
 </Project>
