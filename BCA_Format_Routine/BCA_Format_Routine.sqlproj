@@ -96,7 +96,7 @@
     <None Include="Table\FormattingErrorLog_CreateTable.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Procedures\SP_TEST_FORMAT_ADDRESS.sql" />
+    <None Include="Procedures\SP_BC_TEST_FORMAT_ADDRESS.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Procedures\SP_TEST_FORMAT_ONE_ADDRESS.sql" />
@@ -114,6 +114,21 @@
     <None Include="Function\INSTR.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Script\TestAllFormatAddress.sql" />
+    <None Include="Script\Test_BC_FormatAddress.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Script\Test_USA_FormatAddress.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Procedures\SP_USA_TEST_FORMAT_ADDRESS.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Procedures\SP_FOREIGN_TEST_FORMAT_ADDRESS.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Script\Test_FOREIGN_FormatAddress.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Script\Test_ALL_FormatAddress.sql" />
   </ItemGroup>
 </Project>

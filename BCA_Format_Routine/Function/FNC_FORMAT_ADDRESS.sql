@@ -71,8 +71,8 @@ BEGIN
 			@CRLFExist  int = 0,
 			@i			int = 0;
 
-	SET @address = dbo.FNC_PREPEND_DATA(@p_Address_CO, 'C/O ')
-	SET @address = dbo.FNC_APPEND_CRLF(@address, (dbo.FNC_PREPEND_DATA(@p_Address_Attention, 'ATTN ')))
+	SET @address = dbo.FNC_PREPEND_DATA(REPLACE(@p_Address_CO,'C/O ',''), 'C/O ')
+	SET @address = dbo.FNC_APPEND_CRLF(@address, (dbo.FNC_PREPEND_DATA(REPLACE(@p_Address_Attention,'ATTN ',''), 'ATTN ')))
 
 	SET @addr1 = TRIM(ISNULL(@addr1,'') + dbo.FNC_APPEND_DATA(@p_Street_Number, ' ') +
 					--dbo.FNC_APPEND_DATA(@p_Pre_Directional, ' ') +
