@@ -85,6 +85,9 @@
     <None Include="Oracle Source\FORMAT_ROLL_OWNER_ADDR.txt" />
     <None Include="Oracle Source\Get_Abrv_Prov_State.txt" />
     <None Include="Oracle Source\Get_Country.txt" />
+    <None Include="Oracle Source\PKG_FORMAT_LEGAL.txt" />
+    <None Include="Oracle Source\PKG_FORMAT_LEGAL_SOD.txt" />
+    <None Include="Oracle Source\FORMAT_PID.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Oracle Source\PKG_FORMAT_OWNER_ADDRESS" />
@@ -130,5 +133,25 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Script\Test_ALL_FormatAddress.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Function\FNC_FORMAT_LEGAL.sql" />
+    <None Include="Function\FNC_MAX_LEN.sql" />
+    <None Include="Function\FNC_GET_PART.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Function\FNC_SUB_LOT.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Function\FNC_TOWNSHIP_DESC.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Function\FNC_MERIDIAN_DESC.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Function\FNC_DISTRICT_DESC.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Function\FORMAT_PID.sql" />
   </ItemGroup>
 </Project>

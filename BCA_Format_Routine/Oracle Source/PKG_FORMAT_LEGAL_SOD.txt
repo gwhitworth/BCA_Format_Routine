@@ -1,0 +1,727 @@
+CREATE OR REPLACE PACKAGE BODY BCA_APPL.PKG_FORMAT_LEGAL_SOD
+IS
+TYPE Township_Set IS RECORD (
+    township_Code    bca_ao.AO_U_TOWNSHIP_CODE.CODE%TYPE,
+	township_Desc    bca_ao.AO_U_TOWNSHIP_CODE.DESCRIPTION%TYPE
+ );
+ --
+ TYPE t_Township_TB IS TABLE OF Township_Set INDEX BY BINARY_INTEGER;
+ --
+/*********************************************************************************************************************
+Function: FNC_FORMAT_LEGAL
+
+Purpose: This is a common function to generate legal lines. Legal descriptive prefix is associated with
+		 each legal field.
+
+Parameter: pv_line_length, pv_line_number, 
+	  	   pv_jurisdiction,  
+		   pv_parcel, pv_parcel_length,
+		   pv_lot, pv_lot_length,
+		   pv_strata_lot, pv_strata_lot_length,
+		   pv_block, pv_block_length,
+		   pv_sub_block, pv_sub_block_length,
+		   pv_plan, pv_plan_length,
+		   pv_sub_lot, pv_sub_lot_length,
+		   pv_part_1, pv_part_2,
+		   pv_part_3, pv_part_4,
+		   pv_part_length,
+		   pv_district_lot, pv_district_lot_length,
+		   pv_legal_subdivision, pv_legal_subdivision_length,
+		   pv_section, pv_section_length,
+		   pv_township, pv_township_length,
+		   pv_range, pv_range_length,
+		   pv_meridian, pv_meridian_length,
+		   pv_bcaao_group, pv_bcaao_group_length,
+		   pv_land_district, pv_land_district_length,
+		   pv_portion, pv_portion_length,
+		   pv_except_plan, pv_except_plan_length,
+		   pv_legal_text, pv_legal_text_length,
+		   pv_air_space_parcel, pv_air_space_parcel_length,
+		   pv_lease_licence_num, pv_lease_licence_num_length,
+		   pv_mf_num, pv_mf_num_length,
+		   pv_mhr_number, pv_mhr_number_length,
+		   pv_bay_no, pv_bay_no_length,
+		   pv_mobile_park_name, pv_mobile_park_name_length,
+		   pv_park_folio_id, pv_park_folio_id_length,
+		   pv_pid1, pv_pid2, 
+		   pv_pid3, pv_pid4,
+		   pv_pid5, pv_pid_length,
+		   pv_project_num, pv_project_num
+
+Return/result: a legal line with fixed line length
+			   remark: the whole word won't be truncated i.e. the line of length maybe shorter
+		
+Assumption: The parameter of park_folio_id has been formated.
+
+Modified History:	
+Author							 Date			Purpose
+---------------------------------------------------------------------------------------------------------------------
+1.0								June 2005		original build
+
+1.1                            27 Oct 2005      Add function fnc_meridian_descr function &
+                                                Add function func_township_descr function
+							22 Feb 2007			remove fun_sub_lot function
+*********************************************************************************************************************/
+FUNCTION FNC_FORMAT_LEGAL (pv_line_length IN NUMBER, pv_line_number IN NUMBER, 
+	  	 		 		   pv_jurisdiction IN BCA_AO.OA000_PROPERTY.JURISDICTION%TYPE,  
+						   pv_parcel IN BCA_AO.PA000_PARCEL.PARCEL%TYPE, pv_parcel_length IN NUMBER,
+						   pv_lot IN BCA_AO.PA000_PARCEL.LOT%TYPE, pv_lot_length IN NUMBER,
+						   pv_strata_lot IN VARCHAR2, pv_strata_lot_length IN NUMBER,
+						   pv_block IN BCA_AO.PA000_PARCEL.BLOCK%TYPE, pv_block_length IN NUMBER,
+						   pv_sub_block IN BCA_AO.PA000_PARCEL.SUB_BLOCK%TYPE, pv_sub_block_length IN NUMBER,
+						   pv_plan IN BCA_AO.PA000_PARCEL.PLAN%TYPE, pv_plan_length IN NUMBER,
+						   pv_sub_lot IN BCA_AO.PA000_PARCEL.SUB_LOT%TYPE, pv_sub_lot_length IN NUMBER,
+						   pv_part_1 IN BCA_AO.PA000_PARCEL.PART_1%TYPE, pv_part_2 IN BCA_AO.PA000_PARCEL.PART_2%TYPE,
+						   pv_part_3 IN BCA_AO.PA000_PARCEL.PART_3%TYPE, pv_part_4 IN BCA_AO.PA000_PARCEL.PART_4%TYPE,
+						   pv_part_length IN NUMBER,
+						   pv_district_lot IN BCA_AO.PA000_PARCEL.DISTRICT_LOT%TYPE, pv_district_lot_length IN NUMBER,
+						   pv_legal_subdivision IN BCA_AO.PA000_PARCEL.LEGAL_SUBDIVISION%TYPE, pv_legal_subdivision_length IN NUMBER,
+						   pv_section IN BCA_AO.PA000_PARCEL.SECTION%TYPE, pv_section_length IN NUMBER,
+						   pv_township IN BCA_AO.PA000_PARCEL.TOWNSHIP%TYPE, pv_township_length IN NUMBER,
+						   pv_range IN BCA_AO.PA000_PARCEL.RANGE%TYPE, pv_range_length IN NUMBER,
+						   pv_meridian IN BCA_AO.PA000_PARCEL.MERIDIAN%TYPE, pv_meridian_length IN NUMBER,
+						   pv_bcaao_group IN BCA_AO.PA000_PARCEL.BCAAO_GROUP%TYPE, pv_bcaao_group_length IN NUMBER,
+						   pv_land_district IN BCA_AO.PA000_PARCEL.LAND_DISTRICT%TYPE, pv_land_district_length IN NUMBER,
+						   pv_portion IN BCA_AO.PA000_PARCEL.PORTION%TYPE, pv_portion_length IN NUMBER,
+						   pv_except_plan IN BCA_AO.PA000_PARCEL.EXCEPT_PLAN%TYPE, pv_except_plan_length IN NUMBER,
+						   pv_legal_text IN BCA_AO.PA000_PARCEL.LEGAL_TEXT%TYPE, pv_legal_text_length IN NUMBER,
+						   pv_air_space_parcel IN VARCHAR2, pv_air_space_parcel_length IN NUMBER,
+						   pv_lease_licence_num IN VARCHAR2, pv_lease_licence_num_length IN NUMBER,
+						   pv_mf_num IN BCA_AO.B1000_MF.MF_NUM%TYPE, pv_mf_num_length IN NUMBER,
+						   pv_mhr_number IN BCA_AO.OJ000_MAIN_BLDG.MHR_NUMBER%TYPE, pv_mhr_number_length IN NUMBER,
+						   pv_bay_no IN BCA_AO.AB000_ADDRESS.UNIT_NUMBER%TYPE, pv_bay_no_length IN NUMBER,
+						   pv_mobile_park_name IN BCA_AO.FA000_GROUP.GROUP_NAME%TYPE, pv_mobile_park_name_length IN NUMBER,
+						   pv_park_folio_id IN VARCHAR2, pv_park_folio_id_length IN NUMBER,
+						   pv_pid1 IN BCA_AO.PA000_PARCEL.PID%TYPE, pv_pid2 IN BCA_AO.PA000_PARCEL.PID%TYPE, 
+						   pv_pid3 IN BCA_AO.PA000_PARCEL.PID%TYPE, pv_pid4 IN BCA_AO.PA000_PARCEL.PID%TYPE,
+						   pv_pid5 IN BCA_AO.PA000_PARCEL.PID%TYPE, pv_pid_length IN NUMBER,
+                                                   pv_project_num IN BCA_AO.PA000_PARCEL.PROJECT_NUM%TYPE DEFAULT NULL, pv_proj_num_length IN NUMBER DEFAULT 0)
+RETURN VARCHAR2
+IS
+
+v_legal VARCHAR2(2000);
+
+BEGIN
+v_legal := v_legal || FNC_APPEND_DATA(FNC_MAX_LEN(TO_CHAR(pv_project_num),pv_proj_num_length), ',', 'Pipeline Project:', '');
+v_legal := v_legal || FNC_APPEND_DATA((FNC_MAX_LEN(pv_parcel, pv_parcel_length)), ' ', 'PCL:', '');
+IF pv_strata_lot IS NOT NULL THEN
+   v_legal := v_legal || FNC_APPEND_DATA((FNC_MAX_LEN(pv_strata_lot, pv_strata_lot_length)), ' ', 'Strata Lot', '');
+ELSE
+   v_legal := v_legal || FNC_APPEND_DATA((FNC_MAX_LEN(pv_lot, pv_lot_length)), ' ', 'LOT:', '');
+END IF;   
+v_legal := v_legal || FNC_APPEND_DATA((FNC_MAX_LEN(pv_block, pv_block_length)), ' ', 'BLK:', '')
+ 		   		   || FNC_APPEND_DATA((FNC_MAX_LEN(pv_sub_block, pv_sub_block_length)), ' ', 'Sub Block', '')
+				   || FNC_APPEND_DATA((FNC_MAX_LEN(pv_plan, pv_plan_length)), ' ', 'PL:', '')
+				   || FNC_APPEND_DATA((FNC_MAX_LEN(pv_sub_lot, pv_sub_lot_length)), ',', FNC_SUB_LOT(pv_jurisdiction), '')
+				   || FNC_APPEND_DATA((FNC_GET_PART(FNC_MAX_LEN(pv_part_1, pv_part_length))), ' ', 'PART:', '')
+				   || FNC_APPEND_DATA((FNC_GET_PART(FNC_MAX_LEN(pv_part_2, pv_part_length))), ' ', 'of', '')
+				   || FNC_APPEND_DATA((FNC_GET_PART(FNC_MAX_LEN(pv_part_3, pv_part_length))), ' ', 'of', '')
+				   || FNC_APPEND_DATA((FNC_GET_PART(FNC_MAX_LEN(pv_part_4, pv_part_length))), ' ', 'of', '');
+IF SUBSTR(trim(v_legal), length(trim(v_legal)), 1) <> ',' THEN v_legal := trim(v_legal) || ', '; END IF;
+v_legal := v_legal || FNC_APPEND_DATA((FNC_MAX_LEN(pv_district_lot, pv_district_lot_length)), ' ', 'DL:', '')
+		   		   || FNC_APPEND_DATA((FNC_MAX_LEN(pv_legal_subdivision, pv_legal_subdivision_length)), ' ', 'Legal Subdivision', '')
+				   || FNC_APPEND_DATA((FNC_MAX_LEN(pv_section, pv_section_length)), ' ', 'SEC:', '')
+				   || FNC_APPEND_DATA(FNC_TOWNSHIP_DESC(pv_township), ' ', 'TWP:', '')
+				   || FNC_APPEND_DATA((FNC_MAX_LEN(pv_range, pv_range_length)), ' ', 'RGE:', '')
+				   || FNC_APPEND_DATA(FNC_MERIDIAN_DESC(pv_meridian), ' ', 'MER:', '')
+				   || FNC_APPEND_DATA((FNC_MAX_LEN(pv_bcaao_group, pv_bcaao_group_length)), ' ', 'GRP:', '')
+				   || FNC_APPEND_DATA(FNC_DISTRICT_DESC(pv_land_district), ' ', '', '')
+				   || FNC_APPEND_DATA((FNC_MAX_LEN(pv_portion, pv_portion_length)), ' ', 'PORT:', '')
+				   || FNC_APPEND_DATA((FNC_MAX_LEN(pv_except_plan, pv_except_plan_length)), ' ', 'EXC PL:', '')
+				   || FNC_APPEND_DATA((FNC_MAX_LEN(pv_legal_text, pv_legal_text_length)), ',', '', '');
+IF pv_strata_lot IS NOT NULL THEN
+   IF pv_lot IS NOT NULL THEN
+   	  v_legal := v_legal || FNC_APPEND_DATA((FNC_MAX_LEN(pv_lot, pv_lot_length)), ' ', 'LOT:', '');
+   END IF;
+END IF;
+v_legal := v_legal || FNC_APPEND_DATA((FNC_MAX_LEN(pv_air_space_parcel, pv_air_space_parcel_length)), ' ', 'Air Space Parcel', '')
+ 		   		   || FNC_APPEND_DATA((FNC_MAX_LEN(pv_lease_licence_num, pv_lease_licence_num_length)), ' ', 'LEASE#', '')
+ 				   || FNC_APPEND_DATA((FNC_MAX_LEN(pv_mf_num, pv_mf_num_length)), ' ', 'MF', '')
+ 				   || FNC_APPEND_DATA((FNC_MAX_LEN(pv_mhr_number, pv_mhr_number_length)), ' ', 'MHR#', '');
+IF pv_mhr_number IS NOT NULL THEN
+   IF pv_bay_no IS NOT NULL THEN
+   	  v_legal := v_legal || FNC_APPEND_DATA((FNC_MAX_LEN(pv_bay_no, pv_bay_no_length)), ',', 'BAY#', '');
+   END IF;
+END IF; 				   
+v_legal := v_legal || FNC_APPEND_DATA((FNC_MAX_LEN(pv_mobile_park_name, pv_mobile_park_name_length)), ',', '', 'Manufactured Home Park')
+				   || FNC_APPEND_DATA((FNC_MAX_LEN(pv_park_folio_id, pv_park_folio_id_length)), ' ', 'MHP Roll #', '');
+				   
+IF pv_jurisdiction IN ('407', '410', '411', '414', '415') THEN              
+   v_legal := v_legal || FNC_APPEND_DATA((FNC_MAX_LEN(BCA_APPL.FORMAT_PID(pv_pid1), pv_pid_length)), '', 'Parcel ID Number', '')
+ 				   || FNC_APPEND_DATA((FNC_MAX_LEN(BCA_APPL.FORMAT_PID(pv_pid2), pv_pid_length)), '', ' ', '')
+ 				   || FNC_APPEND_DATA((FNC_MAX_LEN(BCA_APPL.FORMAT_PID(pv_pid3), pv_pid_length)), '', ' ', '')
+ 				   || FNC_APPEND_DATA((FNC_MAX_LEN(BCA_APPL.FORMAT_PID(pv_pid4), pv_pid_length)), '', ' ', '')
+				   || FNC_APPEND_DATA((FNC_MAX_LEN(BCA_APPL.FORMAT_PID(pv_pid5), pv_pid_length)), '', ' ', '');
+ELSE
+   v_legal := v_legal || FNC_APPEND_DATA((FNC_MAX_LEN(BCA_APPL.FORMAT_PID(pv_pid1), pv_pid_length)), '', 'Pid #', '')
+ 				   || FNC_APPEND_DATA((FNC_MAX_LEN(BCA_APPL.FORMAT_PID(pv_pid2), pv_pid_length)), '', ' ', '')
+ 				   || FNC_APPEND_DATA((FNC_MAX_LEN(BCA_APPL.FORMAT_PID(pv_pid3), pv_pid_length)), '', ' ', '')
+ 				   || FNC_APPEND_DATA((FNC_MAX_LEN(BCA_APPL.FORMAT_PID(pv_pid4), pv_pid_length)), '', ' ', '')
+				   || FNC_APPEND_DATA((FNC_MAX_LEN(BCA_APPL.FORMAT_PID(pv_pid5), pv_pid_length)), '', ' ', '');
+END IF;
+
+-- remove trailing comma
+
+v_legal := TRIM(v_legal);
+
+IF substr(v_legal, length(trim(v_legal)), 1) = ',' THEN
+   v_legal := substr(v_legal, 1, length(trim(v_legal)) - 1);
+END IF;
+
+
+RETURN((GET_FORMAT_LINE(TRIM(v_legal), pv_line_length, pv_line_number)));
+ 
+END FNC_FORMAT_LEGAL;
+
+/*********************************************************************************************************************
+Function: FNC_FORMAT_LEGAL
+
+Purpose: This is a common function to generate legal lines. Legal descriptive prefix is associated with
+		 each legal field.  This version includes NTS formatting.
+
+Parameter: pv_line_length, pv_line_number, 
+	  	   pv_jurisdiction,  
+		   pv_parcel, pv_parcel_length,
+		   pv_lot, pv_lot_length,
+		   pv_strata_lot, pv_strata_lot_length,
+		   pv_block, pv_block_length,
+		   pv_sub_block, pv_sub_block_length,
+		   pv_plan, pv_plan_length,
+		   pv_sub_lot, pv_sub_lot_length,
+		   pv_part_1, pv_part_2,
+		   pv_part_3, pv_part_4,
+		   pv_part_length,
+		   pv_district_lot, pv_district_lot_length,
+		   pv_legal_subdivision, pv_legal_subdivision_length,
+		   pv_section, pv_section_length,
+		   pv_township, pv_township_length,
+		   pv_range, pv_range_length,
+		   pv_meridian, pv_meridian_length,
+		   pv_bcaao_group, pv_bcaao_group_length,
+		   pv_land_district, pv_land_district_length,
+		   pv_portion, pv_portion_length,
+		   pv_except_plan, pv_except_plan_length,
+		   pv_legal_text, pv_legal_text_length,
+		   pv_air_space_parcel, pv_air_space_parcel_length,
+		   pv_lease_licence_num, pv_lease_licence_num_length,
+		   pv_mf_num, pv_mf_num_length,
+		   pv_mhr_number, pv_mhr_number_length,
+		   pv_bay_no, pv_bay_no_length,
+		   pv_mobile_park_name, pv_mobile_park_name_length,
+		   pv_park_folio_id, pv_park_folio_id_length,
+		   pv_pid1, pv_pid2, 
+		   pv_pid3, pv_pid4,
+		   pv_pid5, pv_pid_length,
+                   pv_nts_block_num, pv_nts_block_num_length,
+                   pv_nts_exception, pv_nts_exception_length,
+                   pv_nts_map_num, pv_nts_map_num_length,
+                   pv_nts_quarter_unit, pv_nts_quarter_unit_length,
+                   pv_nts_unit, pv_nts_unit_length
+
+
+Return/result: a legal line with fixed line length
+			   remark: the whole word won't be truncated i.e. the line of length maybe shorter
+		
+Assumption: The parameter of park_folio_id has been formated.
+
+Modified History:	
+Author							 Date			Purpose
+---------------------------------------------------------------------------------------------------------------------
+1.0                        Aug 2009    original build to add NTS information without affecting existing code
+2.0                    03 Sept 2014    WO50072 - Remove space between labels and values for legal description
+                                               - 1. NTS:(value) 2. Comma instead of space for each PID
+                                               - 3 Add a apace in the concatenation of the well site legal description
+*********************************************************************************************************************/
+FUNCTION FNC_FORMAT_LEGAL (pv_line_length IN NUMBER, pv_line_number IN NUMBER, 
+                           pv_jurisdiction IN BCA_AO.OA000_PROPERTY.JURISDICTION%TYPE,  
+                           pv_parcel IN BCA_AO.PA000_PARCEL.PARCEL%TYPE, pv_parcel_length IN NUMBER,
+                           pv_lot IN BCA_AO.PA000_PARCEL.LOT%TYPE, pv_lot_length IN NUMBER,
+                           pv_strata_lot IN VARCHAR2, pv_strata_lot_length IN NUMBER,
+                           pv_block IN BCA_AO.PA000_PARCEL.BLOCK%TYPE, pv_block_length IN NUMBER,
+                           pv_sub_block IN BCA_AO.PA000_PARCEL.SUB_BLOCK%TYPE, pv_sub_block_length IN NUMBER,
+                           pv_plan IN BCA_AO.PA000_PARCEL.PLAN%TYPE, pv_plan_length IN NUMBER,
+                           pv_sub_lot IN BCA_AO.PA000_PARCEL.SUB_LOT%TYPE, pv_sub_lot_length IN NUMBER,
+                           pv_part_1 IN BCA_AO.PA000_PARCEL.PART_1%TYPE, pv_part_2 IN BCA_AO.PA000_PARCEL.PART_2%TYPE,
+                           pv_part_3 IN BCA_AO.PA000_PARCEL.PART_3%TYPE, pv_part_4 IN BCA_AO.PA000_PARCEL.PART_4%TYPE,
+                           pv_part_length IN NUMBER,
+                           pv_district_lot IN BCA_AO.PA000_PARCEL.DISTRICT_LOT%TYPE, pv_district_lot_length IN NUMBER,
+                           pv_legal_subdivision IN BCA_AO.PA000_PARCEL.LEGAL_SUBDIVISION%TYPE, pv_legal_subdivision_length IN NUMBER,
+                           pv_section IN BCA_AO.PA000_PARCEL.SECTION%TYPE, pv_section_length IN NUMBER,
+                           pv_township IN BCA_AO.PA000_PARCEL.TOWNSHIP%TYPE, pv_township_length IN NUMBER,
+                           pv_range IN BCA_AO.PA000_PARCEL.RANGE%TYPE, pv_range_length IN NUMBER,
+                           pv_meridian IN BCA_AO.PA000_PARCEL.MERIDIAN%TYPE, pv_meridian_length IN NUMBER,
+                           pv_bcaao_group IN BCA_AO.PA000_PARCEL.BCAAO_GROUP%TYPE, pv_bcaao_group_length IN NUMBER,
+                           pv_land_district IN BCA_AO.PA000_PARCEL.LAND_DISTRICT%TYPE, pv_land_district_length IN NUMBER,
+                           pv_portion IN BCA_AO.PA000_PARCEL.PORTION%TYPE, pv_portion_length IN NUMBER,
+                           pv_except_plan IN BCA_AO.PA000_PARCEL.EXCEPT_PLAN%TYPE, pv_except_plan_length IN NUMBER,
+                           pv_legal_text IN BCA_AO.PA000_PARCEL.LEGAL_TEXT%TYPE, pv_legal_text_length IN NUMBER,
+                           pv_air_space_parcel IN VARCHAR2, pv_air_space_parcel_length IN NUMBER,
+                           pv_lease_licence_num IN VARCHAR2, pv_lease_licence_num_length IN NUMBER,
+                           pv_mf_num IN BCA_AO.B1000_MF.MF_NUM%TYPE, pv_mf_num_length IN NUMBER,
+                           pv_mhr_number IN BCA_AO.OJ000_MAIN_BLDG.MHR_NUMBER%TYPE, pv_mhr_number_length IN NUMBER,
+                           pv_bay_no IN BCA_AO.AB000_ADDRESS.UNIT_NUMBER%TYPE, pv_bay_no_length IN NUMBER,
+                           pv_mobile_park_name IN BCA_AO.FA000_GROUP.GROUP_NAME%TYPE, pv_mobile_park_name_length IN NUMBER,
+                           pv_park_folio_id IN VARCHAR2, pv_park_folio_id_length IN NUMBER,
+                           pv_pid1 IN BCA_AO.PA000_PARCEL.PID%TYPE, pv_pid2 IN BCA_AO.PA000_PARCEL.PID%TYPE, 
+                           pv_pid3 IN BCA_AO.PA000_PARCEL.PID%TYPE, pv_pid4 IN BCA_AO.PA000_PARCEL.PID%TYPE,
+                           pv_pid5 IN BCA_AO.PA000_PARCEL.PID%TYPE, pv_pid_length IN NUMBER,
+                           pv_nts_block_num IN BCA_AO.PA000_PARCEL.NTS_BLOCK_NUM%TYPE, pv_nts_block_num_length IN NUMBER,
+                           pv_nts_exception IN BCA_AO.PA000_PARCEL.NTS_EXCEPTION%TYPE, pv_nts_exception_length IN NUMBER,
+                           pv_nts_map_num IN BCA_AO.PA000_PARCEL.NTS_MAP_NUM%TYPE, pv_nts_map_num_length IN NUMBER,
+                           pv_nts_quarter_unit IN BCA_AO.PA000_PARCEL.NTS_QUARTER_UNIT%TYPE, pv_nts_quarter_unit_length IN NUMBER,
+                           pv_nts_unit IN BCA_AO.PA000_PARCEL.NTS_UNIT%TYPE, pv_nts_unit_length IN NUMBER,
+                           pv_project_num IN BCA_AO.PA000_PARCEL.PROJECT_NUM%TYPE DEFAULT NULL, pv_proj_num_length IN NUMBER DEFAULT 0)
+RETURN VARCHAR2
+IS
+
+v_legal VARCHAR2(2000);
+v_NTS   VARCHAR2(22);
+
+BEGIN
+v_legal := v_legal || FNC_APPEND_DATA(FNC_MAX_LEN(TO_CHAR(pv_project_num),pv_proj_num_length), ',', 'Pipeline Project:', '');
+v_legal := v_legal || FNC_APPEND_DATA((FNC_MAX_LEN(pv_parcel, pv_parcel_length)), ' ', 'PCL:', '');
+IF pv_strata_lot IS NOT NULL THEN
+   v_legal := v_legal || FNC_APPEND_DATA((FNC_MAX_LEN(pv_strata_lot, pv_strata_lot_length)), ' ', 'Strata Lot', '');
+ELSE
+   v_legal := v_legal || FNC_APPEND_DATA((FNC_MAX_LEN(pv_lot, pv_lot_length)), ' ', 'LOT:', '');
+END IF;   
+v_legal := v_legal || FNC_APPEND_DATA((FNC_MAX_LEN(pv_block, pv_block_length)), ' ', 'BLK:', '')
+ 		   		   || FNC_APPEND_DATA((FNC_MAX_LEN(pv_sub_block, pv_sub_block_length)), ' ', 'Sub Block', '')
+				   || FNC_APPEND_DATA((FNC_MAX_LEN(pv_plan, pv_plan_length)), ' ', 'PL:', '')
+				   || FNC_APPEND_DATA((FNC_MAX_LEN(pv_sub_lot, pv_sub_lot_length)), ',', FNC_SUB_LOT(pv_jurisdiction), '')
+				   || FNC_APPEND_DATA((FNC_GET_PART(FNC_MAX_LEN(pv_part_1, pv_part_length))), ' ', 'PART:', '')
+				   || FNC_APPEND_DATA((FNC_GET_PART(FNC_MAX_LEN(pv_part_2, pv_part_length))), ' ', 'of', '')
+				   || FNC_APPEND_DATA((FNC_GET_PART(FNC_MAX_LEN(pv_part_3, pv_part_length))), ' ', 'of', '')
+				   || FNC_APPEND_DATA((FNC_GET_PART(FNC_MAX_LEN(pv_part_4, pv_part_length))), ' ', 'of', '');
+IF SUBSTR(trim(v_legal), length(trim(v_legal)), 1) <> ',' THEN v_legal := trim(v_legal) || ', '; END IF;
+v_legal := v_legal || FNC_APPEND_DATA((FNC_MAX_LEN(pv_district_lot, pv_district_lot_length)), ' ', 'DL:', '')
+		   		   || FNC_APPEND_DATA((FNC_MAX_LEN(pv_legal_subdivision, pv_legal_subdivision_length)), ' ', 'Legal Subdivision', '')
+				   || FNC_APPEND_DATA((FNC_MAX_LEN(pv_section, pv_section_length)), ' ', 'SEC:', '')
+				   || FNC_APPEND_DATA(FNC_TOWNSHIP_DESC(pv_township), ' ', 'TWP:', '')
+				   || FNC_APPEND_DATA((FNC_MAX_LEN(pv_range, pv_range_length)), ' ', 'RGE:', '')
+				   || FNC_APPEND_DATA(FNC_MERIDIAN_DESC(pv_meridian), ' ', 'MER:', '')
+				   || FNC_APPEND_DATA((FNC_MAX_LEN(pv_bcaao_group, pv_bcaao_group_length)), ' ', 'GRP:', '')
+				   || FNC_APPEND_DATA(FNC_DISTRICT_DESC(pv_land_district), ' ', '', '')
+				   || FNC_APPEND_DATA((FNC_MAX_LEN(pv_portion, pv_portion_length)), ' ', 'PORT:', '')
+				   || FNC_APPEND_DATA((FNC_MAX_LEN(pv_except_plan, pv_except_plan_length)), ' ', 'EXC PL:', '')
+				   || FNC_APPEND_DATA((FNC_MAX_LEN(pv_legal_text, pv_legal_text_length)), ',', '', '');
+
+IF pv_nts_quarter_unit IS NOT NULL THEN
+
+   v_NTS :=  'NTS:' || FNC_MAX_LEN(pv_nts_quarter_unit, pv_nts_quarter_unit_length);
+   
+   IF pv_nts_unit IS NOT NULL OR pv_nts_exception IS NOT NULL THEN
+      v_NTS := v_NTS || '-' || FNC_MAX_LEN(pv_nts_exception, pv_nts_exception_length)
+                     || FNC_MAX_LEN(pv_nts_unit, pv_nts_unit_length);
+   END IF;
+   
+   IF pv_nts_block_num IS NOT NULL THEN
+      v_NTS := v_NTS || '-' || FNC_MAX_LEN(pv_nts_block_num, pv_nts_block_num_length);
+   END IF;
+   
+   IF pv_nts_map_num IS NOT NULL THEN
+      v_NTS := v_NTS || '/' || FNC_MAX_LEN(pv_nts_map_num, pv_nts_map_num_length);
+   END IF;
+   
+   v_NTS := v_NTS || ', ';
+
+   
+   v_legal := v_legal || v_NTS;
+   
+END IF;
+
+IF pv_strata_lot IS NOT NULL THEN
+   IF pv_lot IS NOT NULL THEN
+   	  v_legal := v_legal || FNC_APPEND_DATA((FNC_MAX_LEN(pv_lot, pv_lot_length)), ' ', 'LOT:', '');
+   END IF;
+END IF;
+v_legal := v_legal || FNC_APPEND_DATA((FNC_MAX_LEN(pv_air_space_parcel, pv_air_space_parcel_length)), ' ', 'Air Space Parcel', '')
+ 		   		   || FNC_APPEND_DATA((FNC_MAX_LEN(pv_lease_licence_num, pv_lease_licence_num_length)), ' ', 'LEASE#', '')
+ 				   || FNC_APPEND_DATA((FNC_MAX_LEN(pv_mf_num, pv_mf_num_length)), ' ', 'MF', '')
+ 				   || FNC_APPEND_DATA((FNC_MAX_LEN(pv_mhr_number, pv_mhr_number_length)), ' ', 'MHR#', '');
+IF pv_mhr_number IS NOT NULL THEN
+   IF pv_bay_no IS NOT NULL THEN
+   	  v_legal := v_legal || FNC_APPEND_DATA((FNC_MAX_LEN(pv_bay_no, pv_bay_no_length)), ',', 'BAY#', '');
+   END IF;
+END IF; 				   
+v_legal := v_legal || FNC_APPEND_DATA((FNC_MAX_LEN(pv_mobile_park_name, pv_mobile_park_name_length)), ',', '', 'Manufactured Home Park')
+				   || FNC_APPEND_DATA((FNC_MAX_LEN(pv_park_folio_id, pv_park_folio_id_length)), ' ', 'MHP Roll #', '');
+				   
+IF pv_jurisdiction IN ('407', '410', '411', '414', '415') THEN              
+   v_legal := v_legal || FNC_APPEND_DATA((FNC_MAX_LEN(BCA_APPL.FORMAT_PID(pv_pid1), pv_pid_length)), '', 'Parcel ID Number', '')
+ 				   || FNC_APPEND_DATA((FNC_MAX_LEN(BCA_APPL.FORMAT_PID(pv_pid2), pv_pid_length)), '', ' ', '')
+ 				   || FNC_APPEND_DATA((FNC_MAX_LEN(BCA_APPL.FORMAT_PID(pv_pid3), pv_pid_length)), '', ' ', '')
+ 				   || FNC_APPEND_DATA((FNC_MAX_LEN(BCA_APPL.FORMAT_PID(pv_pid4), pv_pid_length)), '', ' ', '')
+				   || FNC_APPEND_DATA((FNC_MAX_LEN(BCA_APPL.FORMAT_PID(pv_pid5), pv_pid_length)), '', ' ', '');
+ELSE
+   v_legal := v_legal || FNC_APPEND_DATA((FNC_MAX_LEN(BCA_APPL.FORMAT_PID(pv_pid1), pv_pid_length)), '', 'Pid #', '')
+ 				   || FNC_APPEND_DATA((FNC_MAX_LEN(BCA_APPL.FORMAT_PID(pv_pid2), pv_pid_length)), '', ' ', '')
+ 				   || FNC_APPEND_DATA((FNC_MAX_LEN(BCA_APPL.FORMAT_PID(pv_pid3), pv_pid_length)), '', ' ', '')
+ 				   || FNC_APPEND_DATA((FNC_MAX_LEN(BCA_APPL.FORMAT_PID(pv_pid4), pv_pid_length)), '', ' ', '')
+				   || FNC_APPEND_DATA((FNC_MAX_LEN(BCA_APPL.FORMAT_PID(pv_pid5), pv_pid_length)), '', ' ', '');
+END IF;
+
+-- remove trailing comma
+
+v_legal := TRIM(v_legal);
+
+IF substr(v_legal, length(trim(v_legal)), 1) = ',' THEN
+   v_legal := substr(v_legal, 1, length(trim(v_legal)) - 1);
+END IF;
+
+
+RETURN((GET_FORMAT_LINE(TRIM(v_legal), pv_line_length, pv_line_number)));
+ 
+END FNC_FORMAT_LEGAL;
+
+/*********************************************************************************************************************
+
+
+Function: FNC_MAX-LEN
+
+Purpose: This is a function to check if the field length greater than the constraint
+
+Parameter: pv_temp (field content), pv_len, 
+	  	   
+
+Return/result: > than the constraint, truncate the field until it fit in the cosntraint
+			   otherwise, return back the field
+		
+Assumption: The parameters are not null
+
+Modified History:	
+Author							 Date			Purpose
+---------------------------------------------------------------------------------------------------------------------
+1.0								June 2005		original build
+
+
+*********************************************************************************************************************/
+FUNCTION FNC_MAX_LEN(pv_temp IN VARCHAR2, pv_len IN NUMBER) 
+RETURN VARCHAR2
+IS
+v_temp VARCHAR2(500);
+
+BEGIN
+
+IF LENGTH(TRIM(pv_temp)) > pv_len THEN
+   v_temp := SUBSTR(pv_temp, 1, pv_len);
+   RETURN TRIM(v_temp);
+ELSE
+	RETURN TRIM(pv_temp);
+END IF; 	
+   
+END FNC_MAX_LEN;
+/*********************************************************************************************************************
+Function: FNC_GET_PART
+
+Purpose: This is a function is followed the formatted rule  of partn
+
+Parameter: pv_partn
+
+Return/result: if the part is not null and is 1 char, give out part with 1/4
+			   otherwise; give out part with 1/2
+			   
+Assumption: None
+
+Modified History:	
+Author							 Date			Purpose
+---------------------------------------------------------------------------------------------------------------------
+1.0								June 2005		original build
+
+S Zhong                     20 Sept. 2005       switch part such that when Length = 1 then 1/2 else 1/4 
+
+*********************************************************************************************************************/
+FUNCTION FNC_GET_PART(pv_part IN BCA_AO.PA000_PARCEL.PART_1%TYPE) 
+					  RETURN VARCHAR2
+IS
+
+BEGIN
+ IF pv_part IS NOT NULL THEN
+ 	IF LENGTH(pv_part) = 1 THEN
+	   RETURN(UPPER(pv_part) || '1/2');
+	ELSE
+	   RETURN(UPPER(pv_part) || '1/4');
+	END IF;
+ ELSE
+ 	   RETURN(pv_part);
+ END IF;	   
+
+END FNC_GET_PART;
+
+/*********************************************************************************************************************
+Function: FNC_SUB_LOT
+
+Purpose: This is a function to find the prefix of sub_lot
+
+Parameter: pv_jurisdiction
+
+Return/result: a prefix: if pv_jurisdiction is 307 or 234, prefix is Suburban Lot 
+			   otherwise; prefix is Subsidy Lot
+			   
+Assumption: None
+
+Modified History:	
+Author							 Date			Purpose
+---------------------------------------------------------------------------------------------------------------------
+1.0								June 2005		original build
+
+
+*********************************************************************************************************************/
+FUNCTION FNC_SUB_LOT(pv_jurisdiction IN BCA_AO.OA000_PROPERTY.JURISDICTION%TYPE)
+RETURN VARCHAR2
+IS
+
+BEGIN
+
+   IF TRIM(pv_jurisdiction) = '234' OR pv_jurisdiction = '307' THEN
+   	  RETURN ('Suburban Lot');
+   ELSE	  
+   	  RETURN ('Sublot');
+   END IF;
+   
+END FNC_SUB_LOT;
+
+/*********************************************************************************************************************
+Function: FNC_DISTRICT_DESC
+
+Purpose: This is a function is get the land district description from the look up table
+		 AO_U_Land_District
+		 
+Parameter: pv_land_district
+
+Return/result: description if found, else return null
+			   
+Assumption: None
+
+Modified History:	
+Author							 Date			Purpose
+---------------------------------------------------------------------------------------------------------------------
+1.0                                                      July 2005              original build
+1.1     Sales on Disk Change for Land District           Aug 2005               original build
+        (DS - just return code instead of desc)
+
+*********************************************************************************************************************/
+FUNCTION FNC_DISTRICT_DESC(pv_land_district IN BCA_AO.PA000_PARCEL.LAND_DISTRICT%TYPE)
+RETURN VARCHAR2
+IS
+v_des VARCHAR2(256);
+BEGIN
+/*
+SELECT description
+INTO v_des
+FROM BCA_AO.AO_U_LAND_DISTRICT l
+WHERE l.code = pv_land_district;
+
+RETURN(trim(v_des));
+*/
+IF pv_land_district IS NULL THEN
+   RETURN(NULL);
+ELSE
+   RETURN('LD: '||pv_land_district);
+END IF;
+
+EXCEPTION
+--check with error
+WHEN NO_DATA_FOUND THEN
+RETURN(NULL);
+
+WHEN OTHERS THEN
+RETURN(NULL);
+
+END FNC_DISTRICT_DESC;
+/*********************************************************************************************************************
+Function: FNC_MERIDIAN_DESC
+
+Purpose: This is a function is get the meridian description from the look up table
+		 AO_U_Meridian 
+		 
+Parameter: pv_meridian_code
+
+Return/result: description if found, else return null
+			   
+Assumption: None 
+
+Modified History:	
+Author							 Date			Purpose
+---------------------------------------------------------------------------------------------------------------------
+1.0							  12 Oct 2005		original build
+
+
+*********************************************************************************************************************/
+
+FUNCTION FNC_MERIDIAN_DESC(pv_meridian_code IN BCA_AO.PA000_PARCEL.MERIDIAN%TYPE)
+RETURN VARCHAR2
+IS
+v_des VARCHAR2(50);
+BEGIN
+
+	 IF pv_meridian_code IS NULL THEN
+	 	
+		RETURN NULL;
+		
+	 ELSE
+		
+		SELECT DESCRIPTION
+		INTO v_des
+		FROM BCA_AO.AO_U_MERIDIAN l
+		WHERE  l.code = pv_meridian_code;
+		
+		RETURN(trim(v_des));
+		
+	 END IF;
+		
+		EXCEPTION
+		--check with error
+		WHEN NO_DATA_FOUND THEN
+		RETURN(NULL);
+		
+		WHEN OTHERS THEN
+		RETURN(NULL);
+
+END FNC_MERIDIAN_DESC;
+/*********************************************************************************************************************
+Function: FNC_TOWNSHIP_DESC 
+
+Purpose: This is a function is get the township description from the look up table
+		 AO_U_Township_Code 
+		 
+Parameter: pv_township_code
+
+Return/result: description if found, else return null
+			   
+Assumption: None 
+
+Modified History:	
+Author							 Date			Purpose
+---------------------------------------------------------------------------------------------------------------------
+1.0							  27 Oct 2005		original build
+
+
+*********************************************************************************************************************/
+FUNCTION FNC_TOWNSHIP_DESC(pv_township_code IN BCA_AO.PA000_PARCEL.TOWNSHIP%TYPE)
+RETURN VARCHAR2
+IS
+v_des     BCA_AO.AO_U_TOWNSHIP_CODE.DESCRIPTION%TYPE;
+v_RtnTxt  BCA_AO.AO_U_TOWNSHIP_CODE.DESCRIPTION%TYPE;
+v_pos     Number;
+v_Chr     VARCHAR2(1);
+v_LZero   BOOLEAN;
+v_list    t_Township_TB;
+v_Count   NUMBER;
+BEGIN
+     -- Initialize variables 
+	 v_Chr := '';
+	 v_pos := 0;
+	 v_des := NULL;
+	 v_LZero := TRUE;
+
+	 IF pv_township_code IS NULL THEN
+	 	
+		RETURN NULL;
+		
+	 ELSE
+		 
+		SELECT l.CODE
+		     , l.DESCRIPTION
+		BULK COLLECT INTO v_list
+		FROM BCA_AO.AO_U_TOWNSHIP_CODE l
+		WHERE  l.code = pv_township_code;
+		
+		-- if description not found, use the code 
+		v_Count := v_list.count;
+		
+		IF v_Count = 0 THEN
+		    
+			 v_pos := Length (pv_township_code);
+	  
+			  For i IN 1.. v_pos LOOP
+			  
+			     -- Get character   
+			     v_Chr := SUBSTR(pv_township_code, i, 1);
+				 
+				 --if it is NOT leading Zero 
+				 IF (v_Chr = '0' )  THEN
+				 
+				    IF  NOT v_LZero  THEN
+					   v_des := v_des || v_Chr;
+					END IF;
+					
+				 ELSE
+				     
+					v_des := v_des || v_Chr;
+										   
+					-- Set not leading zero flag 
+					v_LZero := FALSE;
+									
+				 END IF;
+				 
+				
+			  End LOOP; 
+			
+			  v_RtnTxt := v_des;
+		ELSE
+		    v_RtnTxt := trim(v_list(1).township_Desc); 
+		    --RETURN(trim(v_des));
+	    END IF;
+		
+		RETURN(v_RtnTxt);
+		 
+	 END IF;
+		
+		EXCEPTION
+		--check with error
+		WHEN NO_DATA_FOUND THEN
+		RETURN(NULL);
+		
+		WHEN OTHERS THEN
+		RETURN(NULL);
+
+END FNC_TOWNSHIP_DESC;
+
+/*********************************************************************************************************************
+Function: FNC_APPEND_DATA
+
+Purpose: This is a function to append the data field, prefix and separator.
+
+Parameter: pv_temp, pv_separator, pv_prefix
+
+Return/result: a data field with prefix and comma
+			   remark: null data field will return null
+			   
+Assumption: None
+
+Modified History:	
+Author							 Date			Purpose
+---------------------------------------------------------------------------------------------------------------------
+1.0								June 2005		original build
+
+
+*********************************************************************************************************************/
+FUNCTION FNC_APPEND_DATA(pv_temp IN VARCHAR2, pv_separator IN VARCHAR2, 
+		 				 pv_prefix IN VARCHAR2, pv_suffix IN VARCHAR2)
+RETURN VARCHAR2
+IS
+
+v_temp VARCHAR2(500);
+
+BEGIN
+
+IF pv_temp IS NOT NULL THEN
+   v_temp := (TRIM(TO_CHAR(pv_temp)));
+   IF pv_prefix IS NOT NULL THEN
+   	  v_temp := pv_prefix || ' ' || UPPER(TRIM(v_temp));
+   END IF;
+   IF pv_suffix IS NOT NULL THEN
+   	  v_temp := v_temp || ' ' || pv_suffix;
+   END IF;
+   IF pv_separator IS NOT NULL THEN
+   	  v_temp := TRIM(v_temp) || pv_separator || ' ';
+   END IF;
+END IF;
+
+RETURN v_temp;
+ 
+END FNC_APPEND_DATA;
+		   
+END PKG_FORMAT_LEGAL_SOD;
+/
