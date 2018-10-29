@@ -154,4 +154,22 @@
   <ItemGroup>
     <None Include="Function\FORMAT_PID.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Function\FNC_APPEND_LEGAL_DESCRIPTION.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Table\CreateLegalDescriptionTbl.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Script\TestOneLegalDescription.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Procedures\SP_TEST_FORMAT_ONE_LEGAL_DESCRIPTION.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Script\Test_ALL_FormatLegalDescription.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Procedures\SP_TEST_FORMAT_Legal_Description.sql" />
+  </ItemGroup>
 </Project>

@@ -1,0 +1,10 @@
+﻿DBCC FREEPROCCACHE
+GO
+DBCC DROPCLEANBUFFERS
+GO
+TRUNCATE TABLE [dbo].[LegalDescription]
+GO
+EXEC dbo.[SP_TEST_FORMAT_Legal_Description]
+GO
+SELECT * FROM [EDW].[dbo].[LegalDescription]
+GO
