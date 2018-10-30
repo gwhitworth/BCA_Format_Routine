@@ -88,6 +88,8 @@
     <None Include="Oracle Source\PKG_FORMAT_LEGAL.txt" />
     <None Include="Oracle Source\PKG_FORMAT_LEGAL_SOD.txt" />
     <None Include="Oracle Source\FORMAT_PID.txt" />
+    <None Include="Testing Data\FolioPID.csv" />
+    <None Include="Testing Data\Parcel.csv" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Oracle Source\PKG_FORMAT_OWNER_ADDRESS" />
@@ -185,5 +187,6 @@
     <Build Include="Function\LPAD.sql" />
     <None Include="Script\Test_ALL_FormatPID.sql" />
     <None Include="Procedures\SP_TEST_FORMAT_PID.sql" />
+    <Build Include="Table\CreateFolioFormattedPIDtbl.sql" />
   </ItemGroup>
 </Project>
