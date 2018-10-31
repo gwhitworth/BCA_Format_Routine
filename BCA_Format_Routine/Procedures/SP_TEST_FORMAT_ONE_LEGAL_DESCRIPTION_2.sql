@@ -1,4 +1,4 @@
-﻿CREATE OR ALTER PROCEDURE dbo.SP_TEST_FORMAT_ONE_LEGAL_DESCRIPTION
+﻿CREATE OR ALTER PROCEDURE dbo.SP_TEST_FORMAT_ONE_LEGAL_DESCRIPTION_2
 (
 	@p_Type			VARCHAR(10) = 'SIMPLE'
 )
@@ -62,7 +62,7 @@ BEGIN
 				@p_park_folio_id_length		INT,
 				@p_pid1						VARCHAR(50),  
 				@p_pid_list					VARCHAR(500),  
-				@p_pid_length				INT,
+				@p_pid_list_length			INT,
 				@p_nts_block_num			VARCHAR(50),  
 				@p_nts_block_num_length		INT,
 				@p_nts_exception			VARCHAR(50),  
@@ -105,16 +105,16 @@ BEGIN
 				@p_legal_subdivision_length = 100,
 				@p_section					= [A].[Section],  
 				@p_section_length			= LEN([A].[Section]),  
-				@p_township					= [A].[Township],  
-				@p_township_length			= LEN([A].[Township]),  
+				@p_township					= [A].[Township_Code],  
+				@p_township_length			= LEN([A].[Township_Code]),  
 				@p_range					= [A].[Range],  
 				@p_range_length				= LEN([A].[Range]),  
 				@p_meridian					= [A].[Meridian],  
 				@p_meridian_length			= LEN([A].[Meridian]),  
 				@p_bcaao_group				= [A].[BCA_AO_Group],  
 				@p_bcaao_group_length		= LEN([A].[BCA_AO_Group]),
-				@p_land_district			= [A].[Land_District],  
-				@p_land_district_length		= LEN([A].[Land_District]),  
+				@p_land_district			= [A].[Land_District_Code],  
+				@p_land_district_length		= LEN([A].[Land_District_Code]),  
 				@p_portion					= [A].[Portion],  
 				@p_portion_length			= LEN([A].[Portion]),
 				@p_except_plan				= [A].[Exception_Plan],  
@@ -136,8 +136,8 @@ BEGIN
 				@p_park_folio_id			= '??park_folio_id NOT FOUND??',
 				@p_park_folio_id_length		= LEN('??park_folio_id NOT FOUND??'),
 				@p_pid1						= [A].[Pid],  
-				@p_pid_list					= '',   
-				@p_pid_list_length			= LEN([A].[@p_pid_list]),
+				@p_pid_list					= [B].[Property_ID_List],  
+				@p_pid_list_length			= LEN([B].[Property_ID_List]),
 				@p_nts_block_num			= '??nts_block_num NOT FOUND??',
 				@p_nts_block_num_length		= LEN('??nts_block_num NOT FOUND??'),
 				@p_nts_exception			= '??nts_exception NOT FOUND??',
@@ -150,7 +150,16 @@ BEGIN
 				@p_nts_unit_length			= LEN([A].NTS_Unit),
 				@p_project_num				= [A].[OGC_Project_Number],
 				@p_proj_num_length			= LEN([A].[OGC_Project_Number])
-		FROM [dbo].[Parcel] AS [A]
+		FROM [dbo].[Parcel_2] AS [A]
+		     INNER JOIN (SELECT [A].dimParcel_SK, 
+			                    [A].[Folio_Number],
+								(SELECT [dbo].[FNC_FORMAT_Property_ID_List](STUFF((SELECT '; ' + CAST(B.[PID] AS VARCHAR(50))
+																	FROM [dbo].[FolioPID] AS B
+																	WHERE B.[Folio_Number] = A.[Folio_Number]
+																	ORDER BY B.[PID]
+																	FOR XML PATH('')), 1, 1, ''))) AS [Property_ID_List]
+							FROM [dbo].[ParcelFolioPID] AS [A]
+							GROUP BY [A].dimParcel_SK,A.[Folio_Number]) AS [B] ON [A].dimParcel_SK = [B].dimParcel_SK
 	END
 
 	SELECT [dbo].[FNC_FORMAT_LEGAL](	@p_jurisdiction				,  
@@ -210,7 +219,7 @@ BEGIN
 										@p_park_folio_id			, 
 										@p_park_folio_id_length		,
 										@p_pid1						,  
-										@p_pid_list					,   
+										@p_pid_list					,  
 										@p_pid_list_length			,
 										@p_nts_block_num			,  
 										@p_nts_block_num_length		,

@@ -5,7 +5,7 @@ Function: dbo.FNC_FORMAT_Property_ID_List
 
 Purpose: This is a common function to format owner address
 
-Parameter:	@p_folio
+Parameter:	@p_PID_List
 
 Return/result: Requested Address line
 
@@ -18,7 +18,6 @@ Author.....................Date...........Purpose.............Developer
 *********************************************************************************************************************/
 CREATE FUNCTION [dbo].[FNC_FORMAT_Property_ID_List]
 (
-	@p_folio varchar(50),
 	@p_PID_List varchar(max)
 )
 RETURNS varchar(max)

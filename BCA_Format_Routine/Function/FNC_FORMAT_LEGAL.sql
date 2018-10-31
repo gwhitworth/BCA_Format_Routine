@@ -116,11 +116,8 @@ CREATE FUNCTION [dbo].[FNC_FORMAT_LEGAL]
     @p_park_folio_id			VARCHAR(50), 
 	@p_park_folio_id_length		INT,
     @p_pid1						VARCHAR(50),  
-	@p_pid2						VARCHAR(50),  
-    @p_pid3						VARCHAR(50),  
-	@p_pid4						VARCHAR(50),  
-    @p_pid5						VARCHAR(50),   
-	@p_pid_length				INT,
+	@p_pid_list					VARCHAR(500),  
+	@p_pid_list_length			INT,
     @p_nts_block_num			VARCHAR(50),  
 	@p_nts_block_num_length		INT,
     @p_nts_exception			VARCHAR(50),  
@@ -206,17 +203,9 @@ BEGIN
 						+ [dbo].[FNC_APPEND_LEGAL_DESCRIPTION]([dbo].[FNC_MAX_LEN](@p_park_folio_id, @p_park_folio_id_length), ',', 'MHP Roll #', '');
                
 	IF @p_jurisdiction IN ('407', '410', '411', '414', '415')              
-	   SET @RtnLegalDesc = @RtnLegalDesc + [dbo].[FNC_APPEND_LEGAL_DESCRIPTION]([dbo].[FNC_MAX_LEN]([dbo].[FORMAT_PID](@p_pid1), @p_pid_length), '', 'Parcel ID Number', '')
-							+ [dbo].[FNC_APPEND_LEGAL_DESCRIPTION]([dbo].[FNC_MAX_LEN]([dbo].[FORMAT_PID](@p_pid2), @p_pid_length), '', ',', '')
-							+ [dbo].[FNC_APPEND_LEGAL_DESCRIPTION]([dbo].[FNC_MAX_LEN]([dbo].[FORMAT_PID](@p_pid3), @p_pid_length), '', ',', '')
-							+ [dbo].[FNC_APPEND_LEGAL_DESCRIPTION]([dbo].[FNC_MAX_LEN]([dbo].[FORMAT_PID](@p_pid4), @p_pid_length), '', ',', '')
-							+ [dbo].[FNC_APPEND_LEGAL_DESCRIPTION]([dbo].[FNC_MAX_LEN]([dbo].[FORMAT_PID](@p_pid5), @p_pid_length), '', ',', '')
+	   SET @RtnLegalDesc = @RtnLegalDesc + [dbo].[FNC_APPEND_LEGAL_DESCRIPTION]([dbo].[FNC_MAX_LEN](@p_pid_list, @p_pid_list_length), '', 'Parcel ID Number', '')
 	ELSE
-	   SET @RtnLegalDesc = @RtnLegalDesc + [dbo].[FNC_APPEND_LEGAL_DESCRIPTION]([dbo].[FNC_MAX_LEN]([dbo].[FORMAT_PID](@p_pid1), @p_pid_length), '', 'Pid #', '')
-							+ [dbo].[FNC_APPEND_LEGAL_DESCRIPTION]([dbo].[FNC_MAX_LEN]([dbo].[FORMAT_PID](@p_pid2), @p_pid_length), '', ',', '')
-							+ [dbo].[FNC_APPEND_LEGAL_DESCRIPTION]([dbo].[FNC_MAX_LEN]([dbo].[FORMAT_PID](@p_pid3), @p_pid_length), '', ',', '')
-							+ [dbo].[FNC_APPEND_LEGAL_DESCRIPTION]([dbo].[FNC_MAX_LEN]([dbo].[FORMAT_PID](@p_pid4), @p_pid_length), '', ',', '')
-							+ [dbo].[FNC_APPEND_LEGAL_DESCRIPTION]([dbo].[FNC_MAX_LEN]([dbo].[FORMAT_PID](@p_pid5), @p_pid_length), '', ',', '')
+	   SET @RtnLegalDesc = @RtnLegalDesc + [dbo].[FNC_APPEND_LEGAL_DESCRIPTION]([dbo].[FNC_MAX_LEN](@p_pid_list, @p_pid_list_length), '', 'Pid #', '')
 
 	-- remove trailing comma
 	SET @RtnLegalDesc = TRIM(@RtnLegalDesc)

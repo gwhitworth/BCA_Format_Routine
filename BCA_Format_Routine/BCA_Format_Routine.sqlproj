@@ -166,7 +166,7 @@
     <None Include="Script\TestOneLegalDescription.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Procedures\SP_TEST_FORMAT_ONE_LEGAL_DESCRIPTION.sql" />
+    <None Include="Procedures\SP_TEST_FORMAT_ONE_LEGAL_DESCRIPTION_2.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Script\Test_ALL_FormatLegalDescription.sql" />
@@ -188,5 +188,9 @@
     <None Include="Script\Test_ALL_FormatPID.sql" />
     <None Include="Procedures\SP_TEST_FORMAT_PID.sql" />
     <Build Include="Table\CreateFolioFormattedPIDtbl.sql" />
+    <Build Include="Procedures\SP_TEST_FORMAT_ONE_LEGAL_DESCRIPTION.sql" />
+    <None Include="Script\TestOneLegalDescription_2.sql" />
+    <None Include="Script\Test_ALL_FormatLegalDescription_2.sql" />
+    <None Include="Procedures\SP_TEST_FORMAT_Legal_Description_2.sql" />
   </ItemGroup>
 </Project>
