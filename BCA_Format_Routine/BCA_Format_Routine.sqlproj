@@ -192,5 +192,6 @@
     <None Include="Script\TestOneLegalDescription_2.sql" />
     <None Include="Script\Test_ALL_FormatLegalDescription_2.sql" />
     <None Include="Procedures\SP_TEST_FORMAT_Legal_Description_2.sql" />
+    <None Include="Function\FNC_FORMAT_Property_Class_List.sql" />
   </ItemGroup>
 </Project>

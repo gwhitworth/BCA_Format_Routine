@@ -1,11 +1,11 @@
-﻿DROP FUNCTION IF EXISTS [dbo].[FNC_FORMAT_Property_ID_List]
+﻿DROP FUNCTION IF EXISTS [dbo].[FNC_FORMAT_Property_Class_List]
 GO
 /*********************************************************************************************************************
-Function: dbo.FNC_FORMAT_Property_ID_List
+Function: dbo.FNC_FORMAT_Property_Class_List
 
 Purpose: This is a common function to format owner address
 
-Parameter:	@p_PID_List
+Parameter:	@p_List
 
 Return/result: Requested Address line
 
@@ -14,11 +14,11 @@ Assumption: none
 Modified History:
 Author.....................Date...........Purpose.............Developer
 ---------------------------------------------------------------------------------------------------------------------
-1.0........................Nov 2018......original build       Gerry Whitworth
+1.0........................Jan 2019......original build       Gerry Whitworth
 *********************************************************************************************************************/
-CREATE FUNCTION [dbo].[FNC_FORMAT_Property_ID_List]
+CREATE FUNCTION [dbo].[FNC_FORMAT_Property_Class_List]
 (
-	@p_PID_List varchar(max)
+	@p_List varchar(max)
 )
 RETURNS varchar(max)
 AS
@@ -29,7 +29,7 @@ BEGIN
 	DECLARE @len INT
 	DECLARE @value varchar(8000)
 
-	SET @list = @p_PID_List
+	SET @list = @p_List
 
 	SET @pos = 0
 	SET @len = 0
@@ -40,15 +40,14 @@ BEGIN
 			SET @len = CHARINDEX(';', @list, @pos+1) - @pos
 			SET @value = SUBSTRING(@list, @pos, @len)
             
-			SET @rtnValue = @rtnValue + ' ' + [dbo].[FORMAT_PID](FORMAT(CAST(@value AS INT),'000000000'))
+			SET @rtnValue = @rtnValue + ' ' + @value
 			SET @pos = CHARINDEX(';', @list, @pos+@len) +1
 		END
 	END
 	ELSE
 	BEGIN
-		IF @list IS NOT NULL AND LEN(@list) > 0 --Only One PID for the folio
-			SET @rtnValue = [dbo].[FORMAT_PID](FORMAT(CAST(@list AS INT),'000000000'))
-			--SET @rtnValue = [dbo].[FORMAT_PID](dbo.LPAD(@list,9,'0'))
+		IF @list IS NOT NULL AND LEN(@list) > 0 --Only One Property Class for the folio
+			SET @rtnValue = @value
 	END
 	IF @@ERROR <> 0
 	BEGIN
